@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RACE MOBIL JUARA</title>
+<style>
+/* ============ DASAR ============ */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+html,body{height:100%;overflow:hidden}
+body{font-family:"Trebuchet MS","Segoe UI",Arial,sans-serif;color:#1b2a49;
+  background:linear-gradient(120deg,#ff6b6b,#feca57,#1dd1a1,#48dbfb,#a29bfe,#ff6b6b);background-size:400% 400%;animation:bg 18s ease infinite}
+@keyframes bg{0%{background-position:0 50%}50%{background-position:100% 50%}100%{background-position:0 50%}}
+.screen{position:fixed;inset:0;display:none}
+.screen.active{display:flex}
+
+/* ============ TOMBOL IKON ============ */
+.ibtn{--s:8vh;width:var(--s);height:var(--s);border-radius:50%;border:.5vh solid #1b2a49;font-size:calc(var(--s)*.52);line-height:1;
+  display:grid;place-items:center;cursor:pointer;box-shadow:0 .6vh 0 rgba(0,0,0,.3);transition:transform .12s,box-shadow .12s,opacity .2s;background:#fff}
+.ibtn:hover{transform:translateY(-.3vh) scale(1.05)}
+.ibtn:active{transform:translateY(.4vh);box-shadow:0 .1vh 0 rgba(0,0,0,.3)}
+.ibtn.green{background:#2ecc71}.ibtn.red{background:#ff5252}.ibtn.blue{background:#4dabf7}
+.ibtn.yellow{background:#ffd43b}.ibtn.purple{background:#b197fc}.ibtn.gray{background:#ced4da}
+.ibtn.xl{--s:16vh}.ibtn.md{--s:11vh}.ibtn.sm{--s:7vh}
+.ibtn.dim{opacity:.35;pointer-events:none}
+.ibtn.off{opacity:.55}
+.ibtn.pulse{animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+
+/* ============ HALAMAN PEMBUKA ============ */
+#intro{flex-direction:column;align-items:center;justify-content:center;gap:2.2vh;text-align:center;padding:2vh}
+.brand{background:#fff;border:.5vh solid #1b2a49;border-radius:5vh;padding:.8vh 3vh;font-weight:900;font-size:2.8vh;letter-spacing:.3vh;box-shadow:0 .6vh 0 rgba(0,0,0,.25)}
+.big{font-size:clamp(30px,10vh,110px);line-height:1.02;color:#fff;font-weight:900;
+  text-shadow:-.5vh -.5vh 0 #1b2a49,.5vh -.5vh 0 #1b2a49,-.5vh .5vh 0 #1b2a49,.5vh .5vh 0 #1b2a49,0 1.2vh 0 #1b2a49;animation:bob 2s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-1vh)}}
+.sub{background:#1b2a49;color:#fff;border-radius:3vh;padding:1vh 3vh;font-size:3.2vh;font-weight:800}
+.infoBtn{position:absolute;right:2vh;top:2vh}
+.fullBtn{position:absolute;left:2vh;top:2vh}
+#credit{position:absolute;right:2vh;top:10.5vh;background:#fff;border:.4vh solid #1b2a49;border-radius:2vh;padding:1.2vh 2vh;font-size:2.6vh;font-weight:800;
+  opacity:0;transform:translateY(-1vh) scale(.9);pointer-events:none;transition:.25s;box-shadow:0 .6vh 0 rgba(0,0,0,.25)}
+#credit.show{opacity:1;transform:none}
+.drive{position:absolute;left:0;right:0;bottom:0;height:17vh;background:#555;border-top:1.2vh solid;border-image:repeating-linear-gradient(90deg,#e53935 0 3vh,#fff 3vh 6vh) 1;overflow:hidden;pointer-events:none}
+.drive::after{content:"";position:absolute;left:0;right:0;top:50%;height:.6vh;background:repeating-linear-gradient(90deg,#fff 0 6vh,transparent 6vh 12vh);opacity:.8}
+.drive .dc{position:absolute;bottom:2.5vh;width:20vh;left:-25vh;animation:drive linear infinite}
+@keyframes drive{from{left:-25vh}to{left:110vw}}
+
+/* ============ PILIH MAPEL & SOAL ============ */
+#pilih{align-items:center;justify-content:center}
+.pwrap{width:min(96vw,155vh);display:flex;flex-direction:column;gap:2vh;align-items:center;background:rgba(255,255,255,.94);border:.6vh solid #1b2a49;border-radius:3vh;padding:2.4vh 2.2vw;box-shadow:0 1vh 0 rgba(0,0,0,.25)}
+.ptitle{font-size:4.2vh;font-weight:900;text-align:center}
+.mgrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1.8vh 1.2vw;width:100%}
+.mcard{--c:#4dabf7;height:17vh;border:.5vh solid var(--c);border-radius:2.2vh;background:#fff;padding:1.2vh .5vw;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5vh;
+  cursor:pointer;font-family:inherit;color:#1b2a49;box-shadow:0 .6vh 0 rgba(0,0,0,.22);transition:transform .15s,background .15s}
+.mcard:hover{transform:translateY(-.3vh)}
+.mcard .mi{font-size:6.4vh;line-height:1}
+.mcard .mn{font-size:2.2vh;font-weight:900;line-height:1.1;text-align:center}
+.mcard .mc{font-size:1.8vh;font-weight:700;opacity:.7}
+.mcard.sel{background:#ffd43b;border-color:#1b2a49;transform:translateY(-.6vh) scale(1.05);box-shadow:0 1vh 0 rgba(0,0,0,.3)}
+.lvrow{display:flex;align-items:center;gap:2vw;flex-wrap:wrap;justify-content:center}
+.lvlab{font-size:2.8vh;font-weight:900}
+.lvl{display:flex;gap:1.4vh}
+.lv{border:.5vh solid #1b2a49;background:#fff;border-radius:2.2vh;padding:.8vh 2.2vh;font-size:3.8vh;cursor:pointer;box-shadow:0 .6vh 0 rgba(0,0,0,.25);transition:.15s;line-height:1.2}
+.lv.active{background:#74c0fc;transform:scale(1.1)}
+.jml{background:#1b2a49;color:#fff;border-radius:3vh;padding:.8vh 2.4vh;font-size:3vh;font-weight:900}
+.pill{background:#1b2a49;color:#fff;border-radius:3vh;padding:.8vh 2.4vh;font-size:2.8vh;font-weight:800;text-align:center}
+
+/* ============ PENGATURAN PEMAIN ============ */
+#setup{align-items:center;justify-content:center}
+.card{background:rgba(255,255,255,.95);border:.6vh solid #1b2a49;border-radius:3vh;padding:3vh 4vh;width:min(94vw,135vh);box-shadow:0 1vh 0 rgba(0,0,0,.25);display:flex;flex-direction:column;gap:2vh;align-items:center}
+.card h2{font-size:4.2vh;font-weight:900}
+.cnts{display:flex;gap:2vh}
+.cnt{border:.5vh solid #1b2a49;background:#fff;border-radius:2.5vh;padding:1.2vh 2.5vh;font-size:4vh;cursor:pointer;box-shadow:0 .6vh 0 rgba(0,0,0,.25);transition:.15s}
+.cnt.active{background:#ffd43b;transform:scale(1.1)}
+#names{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2vh 2.4vh;width:100%}
+.nrow{display:flex;align-items:center;gap:1.4vh;background:#fff;border-radius:2.2vh;padding:1.2vh 1.6vh;border:.5vh solid;min-width:0;box-shadow:0 .5vh 0 rgba(0,0,0,.15)}
+.nrow svg{width:11vh;flex:none;overflow:visible}
+.nrow input{flex:1;min-width:0;width:100%;font-size:3.2vh;font-weight:800;border:.3vh solid #adb5bd;border-radius:1.4vh;padding:1vh 1.2vh;font-family:inherit;-webkit-user-select:text;user-select:text;color:#1b2a49}
+.nrow input:focus{outline:none;border-color:#4dabf7}
+.row{display:flex;gap:4vh}
+
+/* ============ LAYAR PERMAINAN ============ */
+#game{flex-direction:column;padding:1vh 1vw;gap:.8vh}
+.top{display:flex;gap:1vw;height:15vh;flex:none}
+.qcard{flex:1;min-width:0;background:#fff;border:.5vh solid #1b2a49;border-radius:2vh;padding:.8vh 1.4vw;display:flex;flex-direction:column;justify-content:center;gap:.7vh;box-shadow:0 .6vh 0 rgba(0,0,0,.25)}
+.qrow{display:flex;align-items:center;gap:1.2vw}
+.qm{flex:none;font-size:4.8vh;line-height:1}
+.qn{flex:none;width:7vh;height:7vh;border-radius:50%;background:#ff6b6b;color:#fff;font-size:4vh;font-weight:900;display:grid;place-items:center;border:.4vh solid #1b2a49}
+.qtext{font-size:clamp(16px,3.3vh,38px);font-weight:800;line-height:1.15}
+.timer{height:1.4vh;background:#e9ecef;border-radius:1vh;overflow:hidden;flex:none}
+.timer i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#1dd1a1,#feca57);border-radius:1vh;transition:width .1s linear}
+.timer i.low{background:linear-gradient(90deg,#ff5252,#ff922b)}
+.reveal{display:none;background:#d3f9d8;border:.3vh solid #2ecc71;border-radius:1.2vh;padding:.3vh 1.2vh;font-size:2.4vh;font-weight:900;color:#1b6b34}
+.reveal.show{display:block}
+.ctrls{display:grid;grid-template-columns:repeat(2,auto);grid-template-rows:repeat(2,auto);gap:1vh .8vw;align-content:center}
+.ctrls .ibtn{--s:6.4vh}
+.rankbar{display:flex;gap:.8vw;height:5vh;flex:none}
+.chip{flex:1;min-width:0;display:flex;align-items:center;gap:.6vw;padding:0 1vw;border-radius:2.5vh;border:.35vh solid #1b2a49;font-size:2.4vh;font-weight:900;box-shadow:0 .4vh 0 rgba(0,0,0,.25);animation:chipin .3s}
+.chip span.n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@keyframes chipin{from{transform:scale(.9);opacity:.5}to{transform:none;opacity:1}}
+.race{flex:1;min-height:0;display:flex;flex-direction:column;border:.5vh solid #1b2a49;border-radius:1.8vh;overflow:hidden;background:#333;box-shadow:0 .6vh 0 rgba(0,0,0,.25)}
+.stands{flex:none;height:6.6vh;position:relative;overflow:hidden;background:linear-gradient(#4b3f8f,#8e6fc4);display:flex;flex-wrap:wrap;align-content:flex-end;justify-content:center;padding-top:1.2vh;line-height:1}
+.stands::before{content:"";position:absolute;left:0;right:0;top:0;height:1vh;background:repeating-linear-gradient(90deg,#ff5252 0 3vh,#ffd43b 3vh 6vh,#4dabf7 6vh 9vh,#2ecc71 9vh 12vh)}
+.stands span{font-size:2.5vh;display:inline-block;animation:cheer .9s ease-in-out infinite}
+@keyframes cheer{0%,100%{transform:translateY(0)}50%{transform:translateY(-.7vh)}}
+.road{flex:1;min-height:0;display:flex;flex-direction:column;background:#555}
+.curb{flex:none;height:1.1vh;background:repeating-linear-gradient(90deg,#e53935 0 2.2vh,#fff 2.2vh 4.4vh)}
+.lane{flex:1;min-height:0;display:grid;grid-template-columns:17vw 1fr;border-top:.3vh dashed rgba(255,255,255,.6)}
+.lane:nth-child(2){border-top:none}
+.lbl{display:flex;align-items:center;gap:.6vw;padding:0 .8vw;border-right:.4vh solid #1b2a49;min-width:0}
+.medal{font-size:3.6vh;flex:none;width:4.2vh;text-align:center}
+.li{flex:1;min-width:0;display:flex;flex-direction:column;gap:.4vh}
+.l1{display:flex;align-items:center;gap:.5vw;font-weight:900;font-size:2.3vh}
+.nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sc{flex:none;font-size:2.1vh;background:rgba(0,0,0,.3);border-radius:2vh;padding:0 .6vw}
+.pb{position:relative;height:1.9vh;background:rgba(0,0,0,.35);border-radius:1vh;overflow:hidden}
+.pb i{display:block;height:100%;width:0;background:linear-gradient(90deg,#fff59d,#fff);border-radius:1vh;transition:width 1.4s cubic-bezier(.2,.8,.25,1)}
+.pb em{position:absolute;inset:0;text-align:center;font-style:normal;font-size:1.45vh;line-height:1.9vh;color:#fff;font-weight:900;text-shadow:0 0 .4vh #000,0 0 .4vh #000}
+.run{position:relative;background:linear-gradient(#6b6b6b,#4f4f4f)}
+.run::before{content:"";position:absolute;left:0;top:0;bottom:0;width:.7vh;background:#fff;z-index:1}
+.lc{position:absolute;left:.7vh;right:1.8vh;top:0;bottom:0}
+.fin{position:absolute;right:0;top:0;bottom:0;width:1.8vh;background:conic-gradient(#000 25%,#fff 0 50%,#000 0 75%,#fff 0) 0 0/.9vh .9vh}
+.car{position:absolute;left:0;bottom:6%;height:min(86%,13vh);aspect-ratio:2/1;transition:left 1.4s cubic-bezier(.2,.8,.25,1),transform 1.4s cubic-bezier(.2,.8,.25,1);z-index:2}
+.cb{position:relative;width:100%;height:100%}
+.cb svg{width:100%;height:100%;display:block;overflow:visible}
+.spd{opacity:0;transition:opacity .2s}
+.cb.boost .spd{opacity:1}
+.cb.boost svg{filter:drop-shadow(-1.8vh 0 1.1vh rgba(255,255,255,.45))}
+.cb .wh{transform-box:fill-box;transform-origin:center}
+.cb.go .wh{animation:spin .22s linear infinite}
+.cb.go{animation:bump .2s ease-in-out infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes bump{0%,100%{transform:translateY(0)}50%{transform:translateY(-.35vh)}}
+.cb.cough{animation:cough .5s ease-in-out 3}
+@keyframes cough{0%,100%{transform:translate(0,0) rotate(0)}15%{transform:translate(-.4vh,-.8vh) rotate(-3deg)}30%{transform:translate(.3vh,0) rotate(1deg)}45%{transform:translate(-.4vh,-.8vh) rotate(-3deg)}60%{transform:translate(.3vh,0)}75%{transform:translate(-.3vh,-.4vh) rotate(-2deg)}}
+.puff{position:absolute;width:2.4vh;height:2.4vh;border-radius:50%;background:rgba(255,255,255,.9);animation:puff .9s ease-out forwards;pointer-events:none;z-index:1}
+.puff.dark{background:rgba(55,55,55,.85)}
+@keyframes puff{from{transform:scale(.4);opacity:.95}to{transform:translate(-4vh,-3vh) scale(2.2);opacity:0}}
+.pop{position:absolute;left:25%;top:-12%;font-size:2.8vh;font-weight:900;color:#fff;white-space:nowrap;text-shadow:-.2vh -.2vh 0 #1b2a49,.2vh -.2vh 0 #1b2a49,-.2vh .2vh 0 #1b2a49,.2vh .2vh 0 #1b2a49;animation:pop 1.3s ease-out forwards;pointer-events:none;z-index:5}
+@keyframes pop{0%{transform:translateY(0) scale(.5);opacity:0}20%{transform:translateY(-.8vh) scale(1.15);opacity:1}100%{transform:translateY(-4vh) scale(1);opacity:0}}
+
+/* ---- kolom jawaban ---- */
+.answers{flex:none;height:33vh;display:flex;gap:.8vw}
+.col{flex:1;min-width:0;display:flex;flex-direction:column;gap:.6vh;padding:.6vh;border:.55vh solid;border-radius:1.8vh;background:rgba(255,255,255,.88);box-shadow:0 .5vh 0 rgba(0,0,0,.25)}
+.chd{flex:none;height:4.2vh;border-radius:1.2vh;display:flex;align-items:center;justify-content:center;font-size:2.4vh;font-weight:900;overflow:hidden;padding:0 .6vw}
+.chd .cn{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.opts{flex:1;min-height:0;display:grid;grid-template-rows:repeat(4,1fr);gap:.6vh}
+.opt{position:relative;display:flex;align-items:center;gap:.6vw;min-height:0;text-align:left;font-family:inherit;font-size:clamp(12px,2.15vh,24px);font-weight:700;line-height:1.1;
+  padding:0 .7vw;background:#fff;color:#1b2a49;border:.35vh solid #1b2a49;border-radius:1.3vh;cursor:pointer;transition:transform .1s,background .15s}
+.opt:active{transform:scale(.97)}
+.opt b{flex:none;width:3.4vh;height:3.4vh;border-radius:50%;background:#1b2a49;color:#fff;display:grid;place-items:center;font-size:2vh}
+.opt span{flex:1;min-width:0}
+.opt.picked{background:#fff3b0;border-color:#f59f00;transform:scale(.98)}
+.col.lock .opt{pointer-events:none}
+.col.lock:not(.reveal) .opt:not(.picked){opacity:.5}
+.opt.correct{background:#2ecc71;color:#fff;border-color:#1b6b34}
+.opt.correct::after{content:"✔";font-size:3vh;font-weight:900}
+.opt.wrong{background:#e74c3c;color:#fff;border-color:#8b1a10}
+.opt.wrong::after{content:"✖";font-size:3vh;font-weight:900}
+.opt.correct b,.opt.wrong b{background:#fff;color:#1b2a49}
+
+/* ============ OVERLAY ============ */
+#cd{position:fixed;inset:0;display:none;align-items:center;justify-content:center;font-size:36vh;font-weight:900;color:#fff;z-index:45;background:rgba(0,0,0,.35);
+  text-shadow:-.8vh -.8vh 0 #1b2a49,.8vh -.8vh 0 #1b2a49,-.8vh .8vh 0 #1b2a49,.8vh .8vh 0 #1b2a49,0 1.6vh 0 #1b2a49}
+#cd.show{display:flex}
+#cd.pop2{animation:cdpop .7s ease-out}
+@keyframes cdpop{0%{transform:scale(2);opacity:0}30%{transform:scale(1);opacity:1}100%{transform:scale(.9);opacity:1}}
+#flag{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:3vh;z-index:40;background:rgba(0,0,0,.4)}
+#flag.show{display:flex}
+.fn{font-size:6vh;font-weight:900;color:#fff;text-shadow:-.4vh -.4vh 0 #1b2a49,.4vh -.4vh 0 #1b2a49,-.4vh .4vh 0 #1b2a49,.4vh .4vh 0 #1b2a49;margin-top:-1vh}
+.donebox{flex:1;grid-row:1/5;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:9vh;gap:1vh;background:#e7f5ff;border-radius:1.3vh}
+.fw{display:flex;align-items:flex-start}
+.pole{width:1.4vh;height:44vh;background:linear-gradient(90deg,#adb5bd,#f1f3f5,#adb5bd);border-radius:1vh;border:.3vh solid #1b2a49}
+.cloth{width:60vh;height:30vh;background:conic-gradient(#000 25%,#fff 0 50%,#000 0 75%,#fff 0) 0 0/7.5vh 7.5vh;border:.6vh solid #1b2a49;transform-origin:left center;animation:wave .55s ease-in-out infinite alternate;box-shadow:0 1vh 2vh rgba(0,0,0,.4)}
+@keyframes wave{from{transform:perspective(70vh) rotateY(-22deg) skewY(-5deg)}to{transform:perspective(70vh) rotateY(22deg) skewY(5deg)}}
+.ft{font-size:12vh;font-weight:900;color:#ffd43b;letter-spacing:.8vh;text-shadow:-.6vh -.6vh 0 #1b2a49,.6vh -.6vh 0 #1b2a49,-.6vh .6vh 0 #1b2a49,.6vh .6vh 0 #1b2a49,0 1.2vh 0 #1b2a49;animation:bob 1s ease-in-out infinite}
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:60}
+
+/* ============ HALAMAN AKHIR ============ */
+#end{flex-direction:column;align-items:center;padding:2.5vh 3vw;gap:1.5vh}
+.win{font-size:6.2vh;font-weight:900;color:#fff;text-align:center;text-shadow:-.4vh -.4vh 0 #1b2a49,.4vh -.4vh 0 #1b2a49,-.4vh .4vh 0 #1b2a49,.4vh .4vh 0 #1b2a49,0 1vh 0 #1b2a49;animation:bob 1.6s ease-in-out infinite}
+.pod{flex:1;min-height:0;width:100%;max-width:140vh;display:flex;align-items:flex-end;justify-content:center;gap:1.6vw}
+.pi{flex:1;max-width:32vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+.pi .pcar{width:100%;max-width:24vh;animation:bob 1.4s ease-in-out infinite}
+.pi .pcar svg{width:100%;display:block;overflow:visible}
+.pi .pn{font-size:3.2vh;font-weight:900;color:#fff;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-shadow:-.25vh -.25vh 0 #1b2a49,.25vh -.25vh 0 #1b2a49,-.25vh .25vh 0 #1b2a49,.25vh .25vh 0 #1b2a49;margin:.4vh 0}
+.pi .bar{width:100%;border:.5vh solid #1b2a49;border-bottom:none;border-radius:2vh 2vh 0 0;display:flex;flex-direction:column;align-items:center;gap:.6vh;padding-top:1.2vh;font-size:3.2vh;font-weight:900;background:linear-gradient(#fff9db,#ffd43b);transform-origin:bottom;animation:rise .9s cubic-bezier(.2,.9,.3,1.2) backwards}
+.pi .bar .m{font-size:7vh;line-height:1}
+@keyframes rise{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.endbtns{display:flex;gap:4vh;flex:none}
+</style>
+</head>
+<body>
+
+<!-- ============ 1. HALAMAN PEMBUKA ============ -->
+<div id="intro" class="screen active">
+  <div class="brand" id="tBrand">RACE MOBIL JUARA</div>
+  <h1 class="big" id="tJudul">BATTLE RACE<br>MOBIL 4 PEMAIN</h1>
+  <div class="sub" id="tSub">Kuis Seru Kelas IV</div>
+  <button class="ibtn green xl pulse" id="bStart" title="Mulai Permainan" aria-label="Mulai Permainan">▶️</button>
+  <button class="ibtn yellow sm fullBtn" id="bFull" title="Layar Penuh" aria-label="Layar Penuh">🖥️</button>
+  <button class="ibtn blue sm infoBtn" id="bInfo" title="Info Pengembang" aria-label="Info Pengembang">ℹ️</button>
+  <div id="credit">Pengembang : Jasrin R. Nupura, S.Pd</div>
+  <div class="drive" id="drive"></div>
+</div>
+
+<!-- ============ 1b. PILIH MAPEL & SOAL ============ -->
+<div id="pilih" class="screen">
+  <div class="pwrap">
+    <h2 class="ptitle">📚 Pilih Mata Pelajaran dan Soal</h2>
+    <div class="mgrid" id="mgrid"></div>
+    <div class="lvrow">
+      <span class="lvlab">Tingkat soal:</span>
+      <div class="lvl" id="lvls">
+        <button class="lv" data-l="1" title="Mudah" aria-label="Mudah">⭐</button>
+        <button class="lv" data-l="2" title="Sedang" aria-label="Sedang">⭐⭐</button>
+        <button class="lv" data-l="3" title="Sulit" aria-label="Sulit">⭐⭐⭐</button>
+        <button class="lv active" data-l="0" title="Semua tingkat" aria-label="Semua tingkat">🌈</button>
+      </div>
+      <div class="jml" id="jml"></div>
+    </div>
+    <div class="row">
+      <button class="ibtn red md" id="bPBack" title="Kembali" aria-label="Kembali">⬅️</button>
+      <button class="ibtn green md dim" id="bPNext" title="Lanjut" aria-label="Lanjut">▶️</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 2. PENGATURAN PEMAIN ============ -->
+<div id="setup" class="screen">
+  <div class="card">
+    <h2>👥 Pengaturan Pemain</h2>
+    <div class="pill" id="pill"></div>
+    <div class="cnts" id="cnts">
+      <button class="cnt" data-n="2" aria-label="2 pemain">🚗🚗</button>
+      <button class="cnt" data-n="3" aria-label="3 pemain">🚗🚗🚗</button>
+      <button class="cnt active" data-n="4" aria-label="4 pemain">🚗🚗🚗🚗</button>
+    </div>
+    <div id="names"></div>
+    <div class="row">
+      <button class="ibtn red md" id="bBack" title="Kembali" aria-label="Kembali">⬅️</button>
+      <button class="ibtn green md pulse" id="bGo" title="Mulai Balapan" aria-label="Mulai Balapan">🏁</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 3. LAYAR PERMAINAN ============ -->
+<div id="game" class="screen">
+  <div class="top">
+    <div class="qcard">
+      <div class="qrow"><div class="qn" id="qno">0</div><div class="qm" id="qm"></div><div class="qtext" id="qtext"></div></div>
+      <div class="timer" id="timer"><i id="tbar"></i></div>
+      <div class="reveal" id="reveal"></div>
+    </div>
+    <div class="ctrls">
+      <button class="ibtn yellow" id="bLintasan" title="Reset Lintasan" aria-label="Reset Lintasan">🏁</button>
+      <button class="ibtn red" id="bReset" title="Reset Permainan" aria-label="Reset Permainan">♻️</button>
+      <button class="ibtn blue" id="bSound" title="Suara" aria-label="Suara">🔊</button>
+      <button class="ibtn gray" id="bHome" title="Menu Utama" aria-label="Menu Utama">🏠</button>
+    </div>
+  </div>
+  <div class="rankbar" id="rankbar"></div>
+  <div class="race">
+    <div class="stands" id="stands"></div>
+    <div class="road" id="road"></div>
+  </div>
+  <div class="answers" id="answers"></div>
+</div>
+
+<!-- ============ 4. HALAMAN AKHIR ============ -->
+<div id="end" class="screen">
+  <div class="win" id="winTitle"></div>
+  <div class="pod" id="pod"></div>
+  <div class="endbtns">
+    <button class="ibtn green md pulse" id="bAgain" title="Main Lagi" aria-label="Main Lagi">🔁</button>
+    <button class="ibtn gray md" id="bMenu" title="Menu Utama" aria-label="Menu Utama">🏠</button>
+  </div>
+</div>
+
+<!-- overlay -->
+<div id="cd"></div>
+<div id="flag"><div class="fw"><div class="pole"></div><div class="cloth"></div></div><div class="ft">FINISH!</div><div class="fn" id="fname"></div></div>
+<canvas id="fx"></canvas>
+
+<script>
+/* =====================================================================
+   BANK SOAL  —  EDIT DI SINI  (Guru cukup mengubah bagian ini)
+   ---------------------------------------------------------------------
+   Data soal berasal dari file bank_soal_kelas4_bab2.json.
+   Setiap mata pelajaran berisi daftar soal dengan format:
+     tingkat    : 1 = Mudah, 2 = Sedang, 3 = Sulit
+     pertanyaan : teks pertanyaan
+     pilihan    : jawaban A, B, C, D
+     jawaban    : huruf jawaban yang benar ("A" / "B" / "C" / "D")
+   Boleh menambah/mengubah soal atau mata pelajaran dengan format yang sama.
+   ===================================================================== */
+const DATA_SOAL = [
+  { mapel:"Matematika", bab:"Bab 2 - Operasi Hitung Bilangan Cacah (tambah, kurang, kali, bagi)", soal:[
+    {"no": 1, "tingkat": 1, "pertanyaan": "25 + 38 = ....", "pilihan": {"A": "53", "B": "63", "C": "64", "D": "73"}, "jawaban": "B"},
+    {"no": 2, "tingkat": 1, "pertanyaan": "90 - 47 = ....", "pilihan": {"A": "53", "B": "33", "C": "137", "D": "43"}, "jawaban": "D"},
+    {"no": 3, "tingkat": 1, "pertanyaan": "6 x 7 = ....", "pilihan": {"A": "42", "B": "36", "C": "48", "D": "49"}, "jawaban": "A"},
+    {"no": 4, "tingkat": 1, "pertanyaan": "56 : 8 = ....", "pilihan": {"A": "6", "B": "8", "C": "7", "D": "9"}, "jawaban": "C"},
+    {"no": 5, "tingkat": 1, "pertanyaan": "400 + 300 = ....", "pilihan": {"A": "600", "B": "700", "C": "800", "D": "7.000"}, "jawaban": "B"},
+    {"no": 6, "tingkat": 2, "pertanyaan": "1.250 + 2.340 = ....", "pilihan": {"A": "3.490", "B": "3.580", "C": "3.690", "D": "3.590"}, "jawaban": "D"},
+    {"no": 7, "tingkat": 2, "pertanyaan": "5.000 - 1.800 = ....", "pilihan": {"A": "3.200", "B": "3.800", "C": "4.200", "D": "3.100"}, "jawaban": "A"},
+    {"no": 8, "tingkat": 2, "pertanyaan": "24 x 5 = ....", "pilihan": {"A": "100", "B": "110", "C": "120", "D": "125"}, "jawaban": "C"},
+    {"no": 9, "tingkat": 2, "pertanyaan": "96 : 4 = ....", "pilihan": {"A": "22", "B": "24", "C": "26", "D": "34"}, "jawaban": "B"},
+    {"no": 10, "tingkat": 2, "pertanyaan": "Sebuah toko roti membuat 15 kotak roti. Setiap kotak berisi 12 roti. Jumlah seluruh roti adalah ....", "pilihan": {"A": "150 roti", "B": "170 roti", "C": "27 roti", "D": "180 roti"}, "jawaban": "D"},
+    {"no": 11, "tingkat": 3, "pertanyaan": "Rina membeli 4 buku dengan harga Rp7.500 per buku. Ia membayar dengan uang Rp50.000. Uang kembalian Rina adalah ....", "pilihan": {"A": "Rp20.000", "B": "Rp15.000", "C": "Rp25.000", "D": "Rp12.500"}, "jawaban": "A"},
+    {"no": 12, "tingkat": 3, "pertanyaan": "Sebanyak 144 butir telur dibagi rata ke dalam 8 kantong. Setiap kantong berisi ....", "pilihan": {"A": "16 butir", "B": "20 butir", "C": "18 butir", "D": "24 butir"}, "jawaban": "C"},
+    {"no": 13, "tingkat": 3, "pertanyaan": "3.450 + 2.875 - 1.325 = ....", "pilihan": {"A": "4.900", "B": "5.000", "C": "5.100", "D": "5.200"}, "jawaban": "B"},
+    {"no": 14, "tingkat": 3, "pertanyaan": "Tiga bus masing-masing membawa 45 penumpang, dan sebuah minibus membawa 28 penumpang. Jumlah seluruh penumpang adalah ....", "pilihan": {"A": "173 orang", "B": "153 orang", "C": "73 orang", "D": "163 orang"}, "jawaban": "D"},
+    {"no": 15, "tingkat": 3, "pertanyaan": "Bilangan yang jika dikalikan 8 menghasilkan 256 adalah ....", "pilihan": {"A": "32", "B": "28", "C": "34", "D": "36"}, "jawaban": "A"}
+  ]},
+  { mapel:"IPAS", bab:"Bab 2 - Wujud Zat dan Perubahannya", soal:[
+    {"no": 1, "tingkat": 1, "pertanyaan": "Tiga wujud zat adalah ....", "pilihan": {"A": "panas, dingin, dan hangat", "B": "tanah, air, dan api", "C": "padat, cair, dan gas", "D": "keras, lembek, dan kenyal"}, "jawaban": "C"},
+    {"no": 2, "tingkat": 1, "pertanyaan": "Air yang kita minum termasuk zat berwujud ....", "pilihan": {"A": "padat", "B": "cair", "C": "gas", "D": "plasma"}, "jawaban": "B"},
+    {"no": 3, "tingkat": 1, "pertanyaan": "Batu termasuk zat berwujud ....", "pilihan": {"A": "cair", "B": "gas", "C": "uap", "D": "padat"}, "jawaban": "D"},
+    {"no": 4, "tingkat": 1, "pertanyaan": "Udara termasuk zat berwujud ....", "pilihan": {"A": "gas", "B": "padat", "C": "cair", "D": "pasir"}, "jawaban": "A"},
+    {"no": 5, "tingkat": 1, "pertanyaan": "Es batu yang dipanaskan akan berubah menjadi ....", "pilihan": {"A": "batu", "B": "udara", "C": "air", "D": "tanah"}, "jawaban": "C"},
+    {"no": 6, "tingkat": 2, "pertanyaan": "Ciri zat padat adalah ....", "pilihan": {"A": "bentuknya selalu mengikuti wadah", "B": "bentuk dan volumenya tetap", "C": "dapat memenuhi seluruh ruangan", "D": "tidak memiliki massa"}, "jawaban": "B"},
+    {"no": 7, "tingkat": 2, "pertanyaan": "Ciri zat cair adalah ....", "pilihan": {"A": "bentuk dan volumenya tetap", "B": "volumenya selalu berubah", "C": "tidak dapat mengalir", "D": "bentuknya mengikuti wadah, volumenya tetap"}, "jawaban": "D"},
+    {"no": 8, "tingkat": 2, "pertanyaan": "Perubahan wujud dari cair menjadi gas (uap) disebut ....", "pilihan": {"A": "menguap", "B": "membeku", "C": "mengembun", "D": "mencair"}, "jawaban": "A"},
+    {"no": 9, "tingkat": 2, "pertanyaan": "Zat gas memiliki ciri ....", "pilihan": {"A": "bentuk dan volumenya tetap", "B": "hanya berada di dasar wadah", "C": "mengisi seluruh ruang wadahnya", "D": "tidak dapat bergerak"}, "jawaban": "C"},
+    {"no": 10, "tingkat": 2, "pertanyaan": "Perubahan wujud dari padat menjadi cair disebut ....", "pilihan": {"A": "membeku", "B": "mencair", "C": "menguap", "D": "mengembun"}, "jawaban": "B"},
+    {"no": 11, "tingkat": 3, "pertanyaan": "Lilin yang meleleh lalu mendingin dan menjadi keras kembali. Perubahan wujud lilin cair menjadi padat disebut ....", "pilihan": {"A": "mencair", "B": "menguap", "C": "menyublim", "D": "membeku"}, "jawaban": "D"},
+    {"no": 12, "tingkat": 3, "pertanyaan": "Kapur barus di dalam lemari lama-kelamaan mengecil dan hilang karena berubah dari padat langsung menjadi gas. Peristiwa ini disebut ....", "pilihan": {"A": "menyublim", "B": "mengembun", "C": "membeku", "D": "mencair"}, "jawaban": "A"},
+    {"no": 13, "tingkat": 3, "pertanyaan": "Perubahan wujud zat dapat terjadi karena zat tersebut ....", "pilihan": {"A": "dibiarkan dalam keadaan diam", "B": "diberi nama baru", "C": "menerima atau melepaskan panas", "D": "dipindahkan ke tempat lain"}, "jawaban": "C"},
+    {"no": 14, "tingkat": 3, "pertanyaan": "Es batu dipanaskan terus-menerus. Urutan perubahan wujud yang terjadi adalah ....", "pilihan": {"A": "gas, cair, padat", "B": "padat, cair, gas", "C": "cair, padat, gas", "D": "padat, gas, cair"}, "jawaban": "B"},
+    {"no": 15, "tingkat": 3, "pertanyaan": "Embun pada daun di pagi hari terbentuk karena uap air di udara ....", "pilihan": {"A": "menyublim menjadi es", "B": "membeku menjadi batu", "C": "menguap menjadi gas", "D": "mengembun menjadi titik-titik air saat suhu dingin"}, "jawaban": "D"}
+  ]},
+  { mapel:"Pendidikan Agama Islam (PAI)", bab:"Bab 2 - Teladan Mulia Asmaulhusna (Al-Malik, Al-Aziz, Al-Quddus, As-Salam, Al-Mu'min)", soal:[
+    {"no": 1, "tingkat": 1, "pertanyaan": "Al-Malik artinya ....", "pilihan": {"A": "Maha Merajai (Maha Menguasai)", "B": "Maha Suci", "C": "Maha Pemberi Rasa Aman", "D": "Maha Pemberi Kedamaian"}, "jawaban": "A"},
+    {"no": 2, "tingkat": 1, "pertanyaan": "Al-Aziz artinya ....", "pilihan": {"A": "Maha Suci", "B": "Maha Merajai", "C": "Maha Perkasa", "D": "Maha Pemberi Rasa Aman"}, "jawaban": "C"},
+    {"no": 3, "tingkat": 1, "pertanyaan": "Al-Quddus artinya ....", "pilihan": {"A": "Maha Perkasa", "B": "Maha Suci", "C": "Maha Merajai", "D": "Maha Pemberi Kedamaian"}, "jawaban": "B"},
+    {"no": 4, "tingkat": 1, "pertanyaan": "As-Salam artinya ....", "pilihan": {"A": "Maha Perkasa", "B": "Maha Suci", "C": "Maha Merajai", "D": "Maha Pemberi Kedamaian dan Keselamatan"}, "jawaban": "D"},
+    {"no": 5, "tingkat": 1, "pertanyaan": "Asmaulhusna artinya ....", "pilihan": {"A": "nama-nama Allah Swt. yang baik", "B": "nama-nama para nabi", "C": "nama-nama malaikat", "D": "nama-nama surah Al-Qur'an"}, "jawaban": "A"},
+    {"no": 6, "tingkat": 2, "pertanyaan": "Jumlah Asmaulhusna adalah ....", "pilihan": {"A": "25", "B": "66", "C": "99", "D": "114"}, "jawaban": "C"},
+    {"no": 7, "tingkat": 2, "pertanyaan": "Cara meneladani Al-Quddus (Maha Suci) dalam kehidupan sehari-hari adalah ....", "pilihan": {"A": "membiarkan kamar berantakan", "B": "menjaga kebersihan badan, pakaian, dan hati", "C": "membuang sampah sembarangan", "D": "berkata kasar kepada teman"}, "jawaban": "B"},
+    {"no": 8, "tingkat": 2, "pertanyaan": "Cara meneladani As-Salam adalah ....", "pilihan": {"A": "memulai pertengkaran", "B": "membalas ejekan dengan ejekan", "C": "memusuhi teman", "D": "menciptakan kedamaian dan tidak bertengkar"}, "jawaban": "D"},
+    {"no": 9, "tingkat": 2, "pertanyaan": "Cara meneladani Al-Mu'min (Pemberi Rasa Aman) adalah ....", "pilihan": {"A": "membuat orang lain merasa aman dan menepati janji", "B": "menakut-nakuti teman", "C": "mengingkari janji", "D": "membocorkan rahasia teman"}, "jawaban": "A"},
+    {"no": 10, "tingkat": 2, "pertanyaan": "Sikap yang menunjukkan keteladanan Al-Aziz (Maha Perkasa) adalah ....", "pilihan": {"A": "mudah menyerah saat sulit", "B": "menyombongkan kekuatan", "C": "kuat, tangguh, dan tidak mudah putus asa", "D": "menindas teman yang lemah"}, "jawaban": "C"},
+    {"no": 11, "tingkat": 3, "pertanyaan": "Tono selalu menepati janji dan menjaga rahasia temannya sehingga teman-temannya merasa aman. Tono meneladani Asmaulhusna ....", "pilihan": {"A": "Al-Malik", "B": "Al-Mu'min", "C": "Al-Aziz", "D": "Al-Quddus"}, "jawaban": "B"},
+    {"no": 12, "tingkat": 3, "pertanyaan": "Rina mendamaikan dua temannya yang sedang bertengkar. Sikap Rina meneladani Asmaulhusna ....", "pilihan": {"A": "Al-Quddus", "B": "Al-Malik", "C": "Al-Aziz", "D": "As-Salam"}, "jawaban": "D"},
+    {"no": 13, "tingkat": 3, "pertanyaan": "Allah Swt. disebut Al-Malik karena Allah Swt. ....", "pilihan": {"A": "berkuasa penuh atas seluruh alam semesta", "B": "membutuhkan bantuan makhluk", "C": "tinggal di istana", "D": "hanya berkuasa atas manusia"}, "jawaban": "A"},
+    {"no": 14, "tingkat": 3, "pertanyaan": "Sikap seorang ketua kelas yang meneladani Al-Malik adalah ....", "pilihan": {"A": "memerintah teman semaunya", "B": "menyuruh teman mengerjakan tugasnya", "C": "bertanggung jawab dan adil terhadap tugasnya, tidak sewenang-wenang", "D": "membeda-bedakan teman"}, "jawaban": "C"},
+    {"no": 15, "tingkat": 3, "pertanyaan": "Pasangan Asmaulhusna dan artinya yang BENAR adalah ....", "pilihan": {"A": "Al-Aziz - Maha Suci", "B": "Al-Quddus - Maha Suci", "C": "As-Salam - Maha Perkasa", "D": "Al-Malik - Maha Pemberi Rasa Aman"}, "jawaban": "B"}
+  ]},
+  { mapel:"PJOK", bab:"Bab 2 - Kebugaran Jasmani (pemanasan, peregangan, komponen kebugaran)", soal:[
+    {"no": 1, "tingkat": 1, "pertanyaan": "Kebugaran jasmani adalah kemampuan tubuh untuk ....", "pilihan": {"A": "tidur sepanjang hari", "B": "menghindari semua gerakan", "C": "makan sebanyak-banyaknya", "D": "melakukan aktivitas sehari-hari tanpa cepat lelah"}, "jawaban": "D"},
+    {"no": 2, "tingkat": 1, "pertanyaan": "Pemanasan dilakukan ....", "pilihan": {"A": "sebelum berolahraga", "B": "sesudah berolahraga", "C": "saat tidur", "D": "saat makan"}, "jawaban": "A"},
+    {"no": 3, "tingkat": 1, "pertanyaan": "Pendinginan dilakukan ....", "pilihan": {"A": "sebelum berolahraga", "B": "sebelum bangun tidur", "C": "sesudah berolahraga", "D": "saat berangkat sekolah"}, "jawaban": "C"},
+    {"no": 4, "tingkat": 1, "pertanyaan": "Gerakan menarik dan meregangkan otot agar lentur disebut ....", "pilihan": {"A": "pemukulan", "B": "peregangan", "C": "pelemparan", "D": "penendangan"}, "jawaban": "B"},
+    {"no": 5, "tingkat": 1, "pertanyaan": "Kebiasaan yang membantu tubuh tetap bugar adalah ....", "pilihan": {"A": "begadang setiap malam", "B": "jarang bergerak", "C": "hanya makan makanan manis", "D": "berolahraga teratur, makan bergizi, dan istirahat cukup"}, "jawaban": "D"},
+    {"no": 6, "tingkat": 2, "pertanyaan": "Berlari jarak jauh terutama melatih komponen kebugaran ....", "pilihan": {"A": "daya tahan", "B": "kelentukan", "C": "keseimbangan", "D": "ketepatan"}, "jawaban": "A"},
+    {"no": 7, "tingkat": 2, "pertanyaan": "Gerakan push up (angkat badan dengan lengan) terutama melatih ....", "pilihan": {"A": "kelentukan", "B": "daya tahan paru-paru", "C": "kekuatan otot", "D": "kecepatan berpikir"}, "jawaban": "C"},
+    {"no": 8, "tingkat": 2, "pertanyaan": "Gerakan peregangan terutama melatih ....", "pilihan": {"A": "kekuatan", "B": "kelentukan", "C": "kecepatan", "D": "ketepatan"}, "jawaban": "B"},
+    {"no": 9, "tingkat": 2, "pertanyaan": "Tujuan pemanasan sebelum olahraga adalah ....", "pilihan": {"A": "membuat tubuh cepat lelah", "B": "mengurangi nafsu makan", "C": "membuat otot kaku", "D": "menaikkan suhu tubuh dan mencegah cedera"}, "jawaban": "D"},
+    {"no": 10, "tingkat": 2, "pertanyaan": "Yang BUKAN termasuk komponen kebugaran jasmani adalah ....", "pilihan": {"A": "kemampuan menghafal", "B": "kekuatan", "C": "kelentukan", "D": "daya tahan"}, "jawaban": "A"},
+    {"no": 11, "tingkat": 3, "pertanyaan": "Lari zig-zag melewati kerucut terutama melatih ....", "pilihan": {"A": "kelentukan", "B": "kekuatan lengan", "C": "kelincahan", "D": "daya tahan otot"}, "jawaban": "C"},
+    {"no": 12, "tingkat": 3, "pertanyaan": "Setelah lomba lari, Dika langsung duduk diam. Sebaiknya Dika ....", "pilihan": {"A": "langsung berlari lagi", "B": "berjalan pelan dan meregangkan otot (pendinginan)", "C": "langsung tidur", "D": "langsung minum es"}, "jawaban": "B"},
+    {"no": 13, "tingkat": 3, "pertanyaan": "Rina rajin berolahraga tetapi tidak pernah melakukan peregangan. Komponen kebugaran yang kurang terlatih pada Rina adalah ....", "pilihan": {"A": "kekuatan", "B": "daya tahan", "C": "kecepatan", "D": "kelentukan"}, "jawaban": "D"},
+    {"no": 14, "tingkat": 3, "pertanyaan": "Berolahraga berat tanpa pemanasan berbahaya karena ....", "pilihan": {"A": "otot terkejut dan mudah mengalami cedera", "B": "tubuh menjadi lebih kuat seketika", "C": "otot menjadi lebih lentur", "D": "tubuh tidak berkeringat"}, "jawaban": "A"},
+    {"no": 15, "tingkat": 3, "pertanyaan": "Kebiasaan yang dapat menurunkan kebugaran tubuh adalah ....", "pilihan": {"A": "tidur cukup", "B": "makan sayur dan buah", "C": "sering begadang dan jarang bergerak", "D": "berolahraga teratur"}, "jawaban": "C"}
+  ]},
+  { mapel:"Pendidikan Pancasila", bab:"Bab 2 - Konstitusi dan Norma di Masyarakat", soal:[
+    {"no": 1, "tingkat": 1, "pertanyaan": "Konstitusi atau dasar hukum tertulis negara Indonesia adalah ....", "pilihan": {"A": "tata tertib kelas", "B": "Undang-Undang Dasar 1945", "C": "aturan permainan", "D": "kesepakatan keluarga"}, "jawaban": "B"},
+    {"no": 2, "tingkat": 1, "pertanyaan": "Aturan yang dibuat agar kehidupan bersama berjalan tertib disebut ....", "pilihan": {"A": "permainan", "B": "hadiah", "C": "undangan", "D": "norma"}, "jawaban": "D"},
+    {"no": 3, "tingkat": 1, "pertanyaan": "Tata tertib sekolah dibuat agar ....", "pilihan": {"A": "kegiatan di sekolah berjalan tertib dan nyaman", "B": "siswa bebas berbuat semaunya", "C": "siswa merasa takut", "D": "guru mudah marah"}, "jawaban": "A"},
+    {"no": 4, "tingkat": 1, "pertanyaan": "Aturan di rumah biasanya dibuat oleh ....", "pilihan": {"A": "kepala sekolah", "B": "presiden", "C": "orang tua bersama anggota keluarga", "D": "tetangga jauh"}, "jawaban": "C"},
+    {"no": 5, "tingkat": 1, "pertanyaan": "Contoh sikap menaati aturan sekolah adalah ....", "pilihan": {"A": "sering terlambat", "B": "datang tepat waktu dan memakai seragam sesuai aturan", "C": "membuang sampah di kelas", "D": "berkelahi dengan teman"}, "jawaban": "B"},
+    {"no": 6, "tingkat": 2, "pertanyaan": "Norma yang bersumber dari ajaran agama disebut norma ....", "pilihan": {"A": "hukum", "B": "kesopanan", "C": "kesusilaan", "D": "agama"}, "jawaban": "D"},
+    {"no": 7, "tingkat": 2, "pertanyaan": "Mengucapkan terima kasih ketika dibantu teman termasuk menaati norma ....", "pilihan": {"A": "kesopanan", "B": "hukum", "C": "agama", "D": "alam"}, "jawaban": "A"},
+    {"no": 8, "tingkat": 2, "pertanyaan": "Norma hukum bersifat ....", "pilihan": {"A": "tidak tertulis dan tanpa sanksi", "B": "hanya berlaku di rumah", "C": "tertulis dan memiliki sanksi yang tegas", "D": "hanya berlaku bagi anak-anak"}, "jawaban": "C"},
+    {"no": 9, "tingkat": 2, "pertanyaan": "Berhenti ketika lampu lalu lintas berwarna merah merupakan contoh menaati norma ....", "pilihan": {"A": "agama", "B": "hukum", "C": "kesopanan saja", "D": "permainan"}, "jawaban": "B"},
+    {"no": 10, "tingkat": 2, "pertanyaan": "Manfaat adanya aturan dalam masyarakat adalah ....", "pilihan": {"A": "orang bebas berbuat semaunya", "B": "orang menjadi saling bermusuhan", "C": "kehidupan menjadi kacau", "D": "kehidupan menjadi tertib, aman, dan adil"}, "jawaban": "D"},
+    {"no": 11, "tingkat": 3, "pertanyaan": "Dani membuang sampah sembarangan di halaman sekolah. Tindakan Dani melanggar tata tertib. Sikap yang benar setelah menyadarinya adalah ....", "pilihan": {"A": "memungut sampah dan membuangnya ke tempat sampah", "B": "membiarkan saja", "C": "menyalahkan teman", "D": "pura-pura tidak tahu"}, "jawaban": "A"},
+    {"no": 12, "tingkat": 3, "pertanyaan": "Sanksi bagi pelanggar aturan tertulis, misalnya aturan lalu lintas, dapat berupa ....", "pilihan": {"A": "pujian", "B": "hadiah", "C": "denda atau hukuman sesuai aturan", "D": "tidak ada akibat apa pun"}, "jawaban": "C"},
+    {"no": 13, "tingkat": 3, "pertanyaan": "Pasangan norma dan cirinya yang BENAR adalah ....", "pilihan": {"A": "norma kesopanan - tertulis dan bersanksi penjara", "B": "norma hukum - tertulis dan bersanksi tegas", "C": "norma hukum - tidak tertulis dan tanpa sanksi", "D": "norma agama - dibuat oleh teman sekelas"}, "jawaban": "B"},
+    {"no": 14, "tingkat": 3, "pertanyaan": "Seluruh warga negara wajib menaati UUD 1945 karena UUD 1945 ....", "pilihan": {"A": "hanya berlaku bagi pejabat", "B": "hanya berlaku di sekolah", "C": "tidak memiliki pengaruh apa pun", "D": "menjadi dasar dan landasan aturan penyelenggaraan negara"}, "jawaban": "D"},
+    {"no": 15, "tingkat": 3, "pertanyaan": "Kelas telah menyepakati jadwal piket harian, tetapi Andi tidak melaksanakan piketnya. Tindakan teman yang tepat adalah ....", "pilihan": {"A": "mengingatkan Andi dengan sopan agar bertanggung jawab", "B": "memarahi Andi di depan kelas", "C": "mengejek Andi", "D": "ikut tidak piket"}, "jawaban": "A"}
+  ]},
+  { mapel:"Bahasa Indonesia", bab:"Bab 2 - Di Bawah Atap (Tugas di Rumah dan Sekolah)", soal:[
+    {"no": 1, "tingkat": 1, "pertanyaan": "Contoh tugas yang dilakukan di rumah adalah ....", "pilihan": {"A": "bermain seharian", "B": "membuang sampah sembarangan", "C": "menyapu halaman dan merapikan tempat tidur", "D": "menonton televisi tanpa henti"}, "jawaban": "C"},
+    {"no": 2, "tingkat": 1, "pertanyaan": "Jadwal piket kelas berisi ....", "pilihan": {"A": "daftar harga barang", "B": "nama siswa dan hari bertugas", "C": "resep masakan", "D": "denah rumah"}, "jawaban": "B"},
+    {"no": 3, "tingkat": 1, "pertanyaan": "Orang yang mengerjakan tugas dengan baik dan tidak menunda-nunda disebut orang yang ....", "pilihan": {"A": "pemalas", "B": "pelupa", "C": "pemarah", "D": "bertanggung jawab"}, "jawaban": "D"},
+    {"no": 4, "tingkat": 1, "pertanyaan": "Kata tanya yang tepat untuk menanyakan orang adalah ....", "pilihan": {"A": "siapa", "B": "kapan", "C": "di mana", "D": "berapa"}, "jawaban": "A"},
+    {"no": 5, "tingkat": 1, "pertanyaan": "Kalimat berita diakhiri dengan tanda ....", "pilihan": {"A": "tanya (?)", "B": "seru (!)", "C": "titik (.)", "D": "koma (,)"}, "jawaban": "C"},
+    {"no": 6, "tingkat": 2, "pertanyaan": "Menceritakan kembali sebuah cerita artinya ....", "pilihan": {"A": "menyalin cerita kata demi kata", "B": "menyampaikan lagi isi cerita dengan kata-kata sendiri", "C": "menghafal judul saja", "D": "membuang isi cerita"}, "jawaban": "B"},
+    {"no": 7, "tingkat": 2, "pertanyaan": "Objek pada kalimat \"Ibu memasak nasi di dapur.\" adalah ....", "pilihan": {"A": "ibu", "B": "memasak", "C": "di dapur", "D": "nasi"}, "jawaban": "D"},
+    {"no": 8, "tingkat": 2, "pertanyaan": "Sikap yang benar saat berdiskusi adalah ....", "pilihan": {"A": "mendengarkan pendapat teman dan menanggapinya dengan sopan", "B": "memotong pembicaraan teman", "C": "berbicara dengan keras tanpa henti", "D": "tidak mau mendengarkan"}, "jawaban": "A"},
+    {"no": 9, "tingkat": 2, "pertanyaan": "Penulisan kalimat yang benar adalah ....", "pilihan": {"A": "Adik belajar dirumah.", "B": "Adik belajar di-rumah.", "C": "Adik belajar di rumah.", "D": "Adik di belajar rumah."}, "jawaban": "C"},
+    {"no": 10, "tingkat": 2, "pertanyaan": "Intonasi yang tepat saat membaca atau berbicara bertujuan agar ....", "pilihan": {"A": "pendengar menjadi bosan", "B": "isi pembicaraan mudah dipahami pendengar", "C": "suara menjadi serak", "D": "pembicaraan menjadi cepat selesai"}, "jawaban": "B"},
+    {"no": 11, "tingkat": 3, "pertanyaan": "Hari Minggu Dina membantu ibu. Ia menyapu lantai, lalu mencuci piring. Ibu tersenyum dan memuji Dina. Setelah menyapu lantai, Dina ....", "pilihan": {"A": "memuji ibu", "B": "pergi bermain", "C": "memasak nasi", "D": "mencuci piring"}, "jawaban": "D"},
+    {"no": 12, "tingkat": 3, "pertanyaan": "Dari cerita tentang Dina tersebut, sifat Dina adalah ....", "pilihan": {"A": "rajin dan suka membantu", "B": "malas dan pelit", "C": "pemarah dan sombong", "D": "penakut dan pendiam"}, "jawaban": "A"},
+    {"no": 13, "tingkat": 3, "pertanyaan": "Kalimat yang menggunakan tanda koma dengan tepat adalah ....", "pilihan": {"A": "Tugas Andi di rumah, adalah menyapu mengepel dan menyiram tanaman.", "B": "Tugas Andi di rumah adalah, menyapu mengepel, dan, menyiram tanaman.", "C": "Tugas Andi di rumah adalah menyapu, mengepel, dan menyiram tanaman.", "D": "Tugas, Andi di rumah adalah menyapu mengepel menyiram tanaman,"}, "jawaban": "C"},
+    {"no": 14, "tingkat": 3, "pertanyaan": "Kalimat yang tersusun dengan benar adalah ....", "pilihan": {"A": "Rudi setiap tempat tidurnya pagi membereskan.", "B": "Setiap pagi Rudi membereskan tempat tidurnya sendiri.", "C": "Tempat tidurnya membereskan Rudi pagi setiap.", "D": "Pagi membereskan setiap Rudi sendiri tempat tidurnya."}, "jawaban": "B"},
+    {"no": 15, "tingkat": 3, "pertanyaan": "Setiap anggota keluarga punya tugas masing-masing. Karena semua mengerjakan tugasnya, rumah menjadi bersih dan nyaman. Pesan cerita tersebut adalah ....", "pilihan": {"A": "tugas rumah hanya milik ibu", "B": "tugas boleh dikerjakan kalau sempat", "C": "rumah bersih tidak penting", "D": "bekerja sama dan bertanggung jawab pada tugas membuat rumah nyaman"}, "jawaban": "D"}
+  ]},
+  { mapel:"Seni Budaya", bab:"Bab 2 - Seni Rupa: Daur Ulang Kerajinan dari Plastik Bekas", soal:[
+    {"no": 1, "tingkat": 1, "pertanyaan": "Botol plastik bekas dapat dimanfaatkan menjadi ....", "pilihan": {"A": "tempat pensil atau pot tanaman", "B": "makanan", "C": "pakaian", "D": "bahan bakar kendaraan"}, "jawaban": "A"},
+    {"no": 2, "tingkat": 1, "pertanyaan": "Mendaur ulang berarti ....", "pilihan": {"A": "membuang barang bekas ke sungai", "B": "membakar semua sampah", "C": "mengolah kembali barang bekas menjadi barang yang berguna", "D": "membeli barang baru terus-menerus"}, "jawaban": "C"},
+    {"no": 3, "tingkat": 1, "pertanyaan": "Sampah plastik yang dibuang sembarangan dapat ....", "pilihan": {"A": "menyuburkan tanah", "B": "mencemari lingkungan", "C": "menjernihkan air", "D": "menyegarkan udara"}, "jawaban": "B"},
+    {"no": 4, "tingkat": 1, "pertanyaan": "Alat yang digunakan untuk memotong plastik bekas adalah ....", "pilihan": {"A": "sendok", "B": "sisir", "C": "penggaris saja", "D": "gunting"}, "jawaban": "D"},
+    {"no": 5, "tingkat": 1, "pertanyaan": "Contoh kerajinan dari plastik bekas adalah ....", "pilihan": {"A": "tempat pensil dari botol bekas", "B": "roti dari tepung", "C": "kursi dari besi baru", "D": "baju dari kapas"}, "jawaban": "A"},
+    {"no": 6, "tingkat": 2, "pertanyaan": "Singkatan 3R dalam pengelolaan sampah adalah ....", "pilihan": {"A": "read, write, run", "B": "reduce, remove, rest", "C": "reduce, reuse, recycle", "D": "reuse, repair, rest"}, "jawaban": "C"},
+    {"no": 7, "tingkat": 2, "pertanyaan": "Reuse artinya ....", "pilihan": {"A": "mengurangi", "B": "menggunakan kembali", "C": "membuang", "D": "membakar"}, "jawaban": "B"},
+    {"no": 8, "tingkat": 2, "pertanyaan": "Sebelum dibuat kerajinan, plastik bekas sebaiknya ....", "pilihan": {"A": "dibiarkan kotor", "B": "dibasahi minyak", "C": "langsung dibakar", "D": "dibersihkan terlebih dahulu"}, "jawaban": "D"},
+    {"no": 9, "tingkat": 2, "pertanyaan": "Bahan yang digunakan untuk menempelkan bagian-bagian kerajinan adalah ....", "pilihan": {"A": "lem", "B": "garam", "C": "air putih", "D": "tepung kering"}, "jawaban": "A"},
+    {"no": 10, "tingkat": 2, "pertanyaan": "Agar kerajinan dari plastik bekas tampak menarik, kita dapat ....", "pilihan": {"A": "membiarkannya polos dan kotor", "B": "merobeknya", "C": "menghiasnya dengan warna dan hiasan", "D": "menyembunyikannya"}, "jawaban": "C"},
+    {"no": 11, "tingkat": 3, "pertanyaan": "Urutan membuat tempat pensil dari botol bekas yang benar adalah ....", "pilihan": {"A": "menghias, memotong, menyiapkan botol, merapikan", "B": "menyiapkan botol, memotong, merapikan, lalu menghias", "C": "memotong, menghias, merapikan, menyiapkan botol", "D": "merapikan, menghias, memotong, menyiapkan botol"}, "jawaban": "B"},
+    {"no": 12, "tingkat": 3, "pertanyaan": "Manfaat mendaur ulang sampah plastik bagi lingkungan adalah ....", "pilihan": {"A": "menambah jumlah sampah", "B": "mencemari sungai", "C": "membuat udara kotor", "D": "mengurangi jumlah sampah"}, "jawaban": "D"},
+    {"no": 13, "tingkat": 3, "pertanyaan": "Membawa tas belanja sendiri untuk mengganti kantong plastik merupakan penerapan prinsip ....", "pilihan": {"A": "reduce (mengurangi)", "B": "recycle (mendaur ulang)", "C": "reuse (menggunakan kembali)", "D": "remove (memindahkan)"}, "jawaban": "A"},
+    {"no": 14, "tingkat": 3, "pertanyaan": "Sampah plastik sulit terurai karena ....", "pilihan": {"A": "langsung hancur dalam sehari", "B": "dimakan semut", "C": "membutuhkan waktu yang sangat lama untuk hancur di dalam tanah", "D": "larut dalam air"}, "jawaban": "C"},
+    {"no": 15, "tingkat": 3, "pertanyaan": "Ciri hasil kerajinan daur ulang yang baik adalah ....", "pilihan": {"A": "rapuh dan berantakan", "B": "rapi, kuat, bermanfaat, dan indah", "C": "tidak berguna", "D": "berbahaya bila disentuh"}, "jawaban": "B"}
+  ]},
+  { mapel:"Bahasa Inggris", bab:"Unit 2 - There Are 67 English Books (Angka 50-100)", soal:[
+    {"no": 1, "tingkat": 1, "pertanyaan": "50 dibaca dalam bahasa Inggris ....", "pilihan": {"A": "fifteen", "B": "forty", "C": "sixty", "D": "fifty"}, "jawaban": "D"},
+    {"no": 2, "tingkat": 1, "pertanyaan": "60 dibaca dalam bahasa Inggris ....", "pilihan": {"A": "sixty", "B": "sixteen", "C": "fifty", "D": "seventy"}, "jawaban": "A"},
+    {"no": 3, "tingkat": 1, "pertanyaan": "70 dibaca dalam bahasa Inggris ....", "pilihan": {"A": "seventeen", "B": "sixty", "C": "seventy", "D": "eighty"}, "jawaban": "C"},
+    {"no": 4, "tingkat": 1, "pertanyaan": "80 dibaca dalam bahasa Inggris ....", "pilihan": {"A": "eighteen", "B": "eighty", "C": "seventy", "D": "ninety"}, "jawaban": "B"},
+    {"no": 5, "tingkat": 1, "pertanyaan": "100 dibaca dalam bahasa Inggris ....", "pilihan": {"A": "one thousand", "B": "ten", "C": "one million", "D": "one hundred"}, "jawaban": "D"},
+    {"no": 6, "tingkat": 2, "pertanyaan": "67 dibaca dalam bahasa Inggris ....", "pilihan": {"A": "sixty-seven", "B": "seventy-six", "C": "sixteen-seven", "D": "sixty-six"}, "jawaban": "A"},
+    {"no": 7, "tingkat": 2, "pertanyaan": "83 dibaca dalam bahasa Inggris ....", "pilihan": {"A": "thirty-eight", "B": "eighty-eight", "C": "eighty-three", "D": "eighteen-three"}, "jawaban": "C"},
+    {"no": 8, "tingkat": 2, "pertanyaan": "\"How many books are there?\" artinya ....", "pilihan": {"A": "Di mana buku itu?", "B": "Ada berapa buku di sana?", "C": "Siapa yang membeli buku?", "D": "Buku apa yang kamu baca?"}, "jawaban": "B"},
+    {"no": 9, "tingkat": 2, "pertanyaan": "\"Ninety-two\" ditulis dengan angka ....", "pilihan": {"A": "29", "B": "72", "C": "82", "D": "92"}, "jawaban": "D"},
+    {"no": 10, "tingkat": 2, "pertanyaan": "\"There are 58 books.\" dibaca ....", "pilihan": {"A": "There are fifty-eight books.", "B": "There are eighty-five books.", "C": "There are fifteen-eight books.", "D": "There is fifty-eight books."}, "jawaban": "A"},
+    {"no": 11, "tingkat": 3, "pertanyaan": "Fifty plus thirty equals ....", "pilihan": {"A": "seventy", "B": "ninety", "C": "eighty", "D": "sixty"}, "jawaban": "C"},
+    {"no": 12, "tingkat": 3, "pertanyaan": "Susunan kalimat yang benar dari kata \"are - there - sixty-seven - English books\" adalah ....", "pilihan": {"A": "Are there sixty-seven English books.", "B": "There are sixty-seven English books.", "C": "English books there are sixty-seven.", "D": "Sixty-seven are there English books."}, "jawaban": "B"},
+    {"no": 13, "tingkat": 3, "pertanyaan": "Angka yang berada setelah ninety-nine adalah ....", "pilihan": {"A": "ninety", "B": "one thousand", "C": "eighty-nine", "D": "one hundred"}, "jawaban": "D"},
+    {"no": 14, "tingkat": 3, "pertanyaan": "Rumah Mr. Putra bernomor 76. Jawaban yang tepat untuk \"What number is Mr. Putra's house?\" adalah ....", "pilihan": {"A": "It is number seventy-six.", "B": "It is number sixty-seven.", "C": "It is number seventeen.", "D": "It is number sixty-six."}, "jawaban": "A"},
+    {"no": 15, "tingkat": 3, "pertanyaan": "Bilangan yang paling besar adalah ....", "pilihan": {"A": "eighty-nine", "B": "seventy-nine", "C": "ninety-eight", "D": "ninety-one"}, "jawaban": "C"}
+  ]},
+  { mapel:"MULOK Bahasa Buol", bab:"Bab 2 - Budaya Daerah (soal umum; lihat catatan)", soal:[
+    {"no": 1, "tingkat": 1, "pertanyaan": "Budaya daerah adalah ....", "pilihan": {"A": "barang impor dari luar negeri", "B": "hasil cipta, rasa, dan karya masyarakat suatu daerah", "C": "aturan sekolah", "D": "mainan modern saja"}, "jawaban": "B"},
+    {"no": 2, "tingkat": 1, "pertanyaan": "Contoh budaya daerah adalah ....", "pilihan": {"A": "pesawat terbang", "B": "telepon pintar", "C": "mesin cuci", "D": "tari tradisional"}, "jawaban": "D"},
+    {"no": 3, "tingkat": 1, "pertanyaan": "Contoh permainan tradisional adalah ....", "pilihan": {"A": "congklak", "B": "permainan komputer", "C": "balap mobil di jalan raya", "D": "sepeda motor"}, "jawaban": "A"},
+    {"no": 4, "tingkat": 1, "pertanyaan": "Pakaian adat biasanya dikenakan pada ....", "pilihan": {"A": "saat tidur", "B": "saat mandi", "C": "upacara atau acara adat", "D": "saat membersihkan selokan"}, "jawaban": "C"},
+    {"no": 5, "tingkat": 1, "pertanyaan": "Gotong royong artinya ....", "pilihan": {"A": "bekerja sendiri-sendiri", "B": "bekerja sama mengerjakan sesuatu secara bersama-sama", "C": "menyuruh orang lain bekerja", "D": "tidak peduli lingkungan"}, "jawaban": "B"},
+    {"no": 6, "tingkat": 2, "pertanyaan": "Manfaat bermain permainan tradisional adalah ....", "pilihan": {"A": "membuat anak menjadi egois", "B": "membuat anak malas bergerak", "C": "membuat anak suka bertengkar", "D": "melatih kerja sama, kejujuran, dan sportivitas"}, "jawaban": "D"},
+    {"no": 7, "tingkat": 2, "pertanyaan": "Rumah adat adalah rumah yang ....", "pilihan": {"A": "menjadi ciri khas suatu daerah", "B": "sama di seluruh dunia", "C": "tidak boleh ditinggali", "D": "dibuat dari bahan modern saja"}, "jawaban": "A"},
+    {"no": 8, "tingkat": 2, "pertanyaan": "Upacara adat adalah kegiatan yang dilakukan ....", "pilihan": {"A": "tanpa aturan sama sekali", "B": "hanya di sekolah", "C": "sesuai tradisi dan kebiasaan masyarakat setempat", "D": "hanya pada malam hari"}, "jawaban": "C"},
+    {"no": 9, "tingkat": 2, "pertanyaan": "Sikap yang tepat terhadap adat teman dari daerah lain adalah ....", "pilihan": {"A": "menertawakan", "B": "menghormati dan tidak mengejek", "C": "melarangnya", "D": "memaksanya berubah"}, "jawaban": "B"},
+    {"no": 10, "tingkat": 2, "pertanyaan": "Makanan khas daerah adalah makanan yang ....", "pilihan": {"A": "tidak boleh dimakan", "B": "hanya ada di luar negeri", "C": "selalu sama di semua daerah", "D": "menjadi ciri khas suatu daerah"}, "jawaban": "D"},
+    {"no": 11, "tingkat": 3, "pertanyaan": "Budaya daerah perlu dilestarikan agar ....", "pilihan": {"A": "tidak hilang dan dapat diwariskan kepada generasi berikutnya", "B": "tidak ada yang mengenalnya", "C": "dilupakan anak cucu", "D": "digantikan semuanya oleh budaya asing"}, "jawaban": "A"},
+    {"no": 12, "tingkat": 3, "pertanyaan": "Contoh cara melestarikan budaya daerah adalah ....", "pilihan": {"A": "melarang kegiatan adat", "B": "mengejek tradisi daerah", "C": "belajar dan menampilkan tarian atau permainan daerah", "D": "membuang benda-benda adat"}, "jawaban": "C"},
+    {"no": 13, "tingkat": 3, "pertanyaan": "Jika budaya daerah tidak lagi dikenal dan dilakukan, maka ....", "pilihan": {"A": "budaya itu semakin terkenal", "B": "budaya itu dapat hilang dan identitas daerah memudar", "C": "budaya itu menjadi budaya dunia", "D": "tidak ada akibat apa pun"}, "jawaban": "B"},
+    {"no": 14, "tingkat": 3, "pertanyaan": "Keberagaman budaya daerah di Indonesia sebaiknya dipandang sebagai ....", "pilihan": {"A": "alasan untuk bertengkar", "B": "alasan untuk memisahkan diri", "C": "hal yang memalukan", "D": "kekayaan bangsa yang harus dijaga dalam persatuan"}, "jawaban": "D"},
+    {"no": 15, "tingkat": 3, "pertanyaan": "Dani bangga memakai pakaian adat daerahnya pada acara di sekolah. Sikap Dani menunjukkan ....", "pilihan": {"A": "cinta dan bangga terhadap budaya daerah", "B": "rasa malu terhadap budaya sendiri", "C": "sikap sombong", "D": "ketidakpedulian"}, "jawaban": "A"}
+  ]}
+];
+
+/* Bank soal yang sedang dipakai — diisi otomatis dari pilihan mapel & tingkat (jangan diubah manual) */
+let bankSoal = [];
+
+/* =====================================================================
+   PENGATURAN UMUM  (boleh diubah guru)
+   ===================================================================== */
+const PENGATURAN = {
+  namaAplikasi : "RACE MOBIL JUARA",
+  judul        : "BATTLE RACE<br>MOBIL 4 PEMAIN",
+  subjudul     : "Kuis Seru Kelas IV",
+  pengembang   : "Pengembang : Jasrin R. Nupura, S.Pd",
+  waktuSoal    : 25,            // detik per soal
+  waktuSetelahPertama : 8,      // sisa detik begitu ada pemain pertama yang menjawab
+  garisFinis   : 100,           // jarak total lintasan
+  jarakMaju    : [14, 10, 7, 5],// jarak maju pemain benar: tercepat, ke-2, ke-3, ke-4
+  poin         : [10, 7, 5, 3]  // poin pemain benar: tercepat, ke-2, ke-3, ke-4
+};
+
+/* Warna mobil tiap pemain */
+const WARNA = [
+  { c:"#e53935", d:"#9c1b17", t:"#fff"    },  // merah
+  { c:"#1e88e5", d:"#0d4f91", t:"#fff"    },  // biru
+  { c:"#fdd835", d:"#b59a00", t:"#1b2a49" },  // kuning
+  { c:"#43a047", d:"#1e6b24", t:"#fff"    }   // hijau
+];
+const MEDALI = ["🥇","🥈","🥉","4️⃣"];
+
+/* =====================================================================
+   UTILITAS
+   ===================================================================== */
+const $ = id => document.getElementById(id);
+function el(tag, cls, html){ const e=document.createElement(tag); if(cls) e.className=cls; if(html!=null) e.innerHTML=html; return e; }
+function acak(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+/* semua timer terdaftar supaya bisa dibatalkan saat reset */
+const timers = new Set();
+function later(fn, ms){ const id=setTimeout(()=>{ timers.delete(id); fn(); }, ms); timers.add(id); return id; }
+function clearLater(){ timers.forEach(id=>{ clearTimeout(id); clearInterval(id); }); timers.clear(); }
+
+/* SVG mobil kartun */
+function carSVG(w, num){
+  return `<svg viewBox="0 0 120 60" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="62" cy="57" rx="50" ry="3" fill="rgba(0,0,0,.3)"/>
+  <g class="spd"><rect x="-34" y="24" width="32" height="3" rx="1.5" fill="#fff"/><rect x="-46" y="33" width="44" height="3" rx="1.5" fill="#fff"/><rect x="-28" y="42" width="26" height="3" rx="1.5" fill="#fff"/></g>
+  <rect x="3" y="22" width="15" height="4.5" rx="2" fill="${w.d}" stroke="#222" stroke-width="1.6"/><rect x="8" y="26" width="3" height="6" fill="#222"/>
+  <g transform="translate(120 0) scale(-1 1)">
+  <path d="M6 42 Q4 32 16 30 L36 27 Q44 11 62 11 L86 11 Q99 13 104 27 L112 30 Q118 33 117 42 L116 46 Q115 48 112 48 L10 48 Q7 48 6 45 Z" fill="${w.c}" stroke="#222" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M45 27 Q51 16 62 16 L67 16 L67 27 Z" fill="#d0f0ff" stroke="#222" stroke-width="2"/>
+  <path d="M71 16 L85 16 Q93 18 98 27 L71 27 Z" fill="#d0f0ff" stroke="#222" stroke-width="2"/>
+  <circle cx="57" cy="22.5" r="4.6" fill="#ffd7a8" stroke="#222" stroke-width="1.4"/>
+  <path d="M52.4 21.5 Q57 15 61.6 21.5 Z" fill="${w.d}" stroke="#222" stroke-width="1.2"/>
+  <rect x="10" y="37" width="100" height="3" fill="rgba(255,255,255,.75)"/>
+  </g>
+  <circle cx="40" cy="37" r="7.5" fill="#fff" stroke="#222" stroke-width="1.8"/>
+  <text x="40" y="41.2" text-anchor="middle" font-family="Arial Black,Arial" font-weight="900" font-size="11" fill="#222">${num}</text>
+  <ellipse cx="114" cy="36" rx="3.4" ry="3" fill="#fff59d" stroke="#222" stroke-width="1.4"/>
+  <rect x="5" y="34" width="3" height="5" rx="1" fill="#ff1744"/>
+  <g class="wh"><circle cx="31" cy="48" r="9.5" fill="#222"/><circle cx="31" cy="48" r="4.6" fill="#cfd8dc"/><rect x="30" y="40" width="2" height="16" fill="#78909c"/></g>
+  <g class="wh"><circle cx="93" cy="48" r="9.5" fill="#222"/><circle cx="93" cy="48" r="4.6" fill="#cfd8dc"/><rect x="92" y="40" width="2" height="16" fill="#78909c"/></g>
+</svg>`;
+}
+
+/* =====================================================================
+   EFEK SUARA  (Web Audio API — tanpa file audio)
+   ===================================================================== */
+let actx = null, muted = false;
+function ac(){
+  if(!actx){ try{ actx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ actx=null; } }
+  if(actx && actx.state==='suspended') actx.resume();
+  return actx;
+}
+function tone(f, d, type, vol, t, f2){
+  const a = ac(); if(!a || muted) return;
+  const o=a.createOscillator(), g=a.createGain(), t0=a.currentTime+(t||0);
+  o.type = type||'sine';
+  o.frequency.setValueAtTime(f, t0);
+  if(f2) o.frequency.exponentialRampToValueAtTime(f2, t0+d);
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(vol||.15, t0+.015);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0+d);
+  o.connect(g); g.connect(a.destination); o.start(t0); o.stop(t0+d+.05);
+}
+const sfx = {
+  pilih(){ tone(700,.06,'square',.07); },
+  benar(){ [523,659,784,1047].forEach((f,i)=>tone(f,.16,'triangle',.2,i*.09)); },
+  salah(){ tone(220,.35,'sawtooth',.15,0,80); tone(160,.3,'square',.09,.12,60); },
+  skor(){ tone(988,.08,'square',.09); tone(1319,.3,'square',.09,.09); },
+  vroom(){ tone(90,.7,'sawtooth',.06,0,260); },
+  tick(go){ tone(go?1046:660, go?.45:.12, 'square', .12); },
+  mulai(){ tone(440,.08,'triangle',.12); tone(660,.1,'triangle',.12,.08); },
+  reset(){ tone(500,.18,'sine',.12,0,250); },
+  meriah(){
+    [523,523,523,659,784,659,784,1047].forEach((f,i)=>tone(f,.24,'triangle',.2,i*.16));
+    [262,330,392].forEach(f=>tone(f,1,'sine',.12,1.3));
+  }
+};
+
+/* =====================================================================
+   EFEK VISUAL: CONFETTI & KEMBANG API (canvas)
+   ===================================================================== */
+const cv = $('fx'), cx = cv.getContext('2d');
+let parts = [], raf = 0;
+function resizeFx(){ cv.width = innerWidth; cv.height = innerHeight; }
+addEventListener('resize', resizeFx); resizeFx();
+function loopFx(){ if(!raf) raf = requestAnimationFrame(stepFx); }
+function stepFx(){
+  raf = 0; cx.clearRect(0,0,cv.width,cv.height);
+  parts.forEach(p=>{
+    p.life--; if(p.life<=0) return;
+    p.vy += p.g; p.x += p.vx; p.y += p.vy;
+    if(p.type==='c'){
+      p.rot += p.vr; p.vx *= .99;
+      cx.save(); cx.translate(p.x,p.y); cx.rotate(p.rot); cx.fillStyle=p.col; cx.fillRect(-p.w/2,-p.h/2,p.w,p.h); cx.restore();
+    }else{
+      p.vx *= .98; cx.globalAlpha = Math.max(0,p.life/p.max); cx.fillStyle=p.col;
+      cx.beginPath(); cx.arc(p.x,p.y,p.r,0,6.283); cx.fill(); cx.globalAlpha = 1;
+    }
+  });
+  parts = parts.filter(p=>p.life>0);
+  if(parts.length) loopFx();
+}
+function confetti(x, y, n){
+  const cols=['#ff5252','#ffd43b','#4dabf7','#2ecc71','#b197fc','#ff922b','#fff'];
+  for(let i=0;i<(n||60);i++) parts.push({type:'c',x,y,vx:(Math.random()-.5)*12,vy:-Math.random()*11-2,g:.28,w:6+Math.random()*7,h:4+Math.random()*6,
+    rot:Math.random()*6,vr:(Math.random()-.5)*.4,col:cols[Math.floor(Math.random()*cols.length)],life:80+Math.random()*50});
+  loopFx();
+}
+function firework(x, y){
+  const hue = Math.floor(Math.random()*360);
+  for(let i=0;i<80;i++){
+    const a=Math.random()*6.283, s=1+Math.random()*6;
+    parts.push({type:'s',x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,g:.07,r:2+Math.random()*2.5,col:`hsl(${hue+Math.random()*40},100%,60%)`,life:70,max:70});
+  }
+  loopFx();
+}
+
+/* =====================================================================
+   STATE PERMAINAN
+   ===================================================================== */
+const S = {
+  n:4, names:['','','',''],
+  players:[], qOrder:[], qPtr:0, qNo:0, q:null,
+  phase:'menu',        // menu | countdown | idle | question | resolving | finished
+  qStart:0, deadline:0, tid:0, auto:true, autoT:0, finN:0
+};
+function setPhase(ph){
+  S.phase = ph;
+}
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active', s.id===id));
+}
+function stopTimer(){ clearInterval(S.tid); S.tid = 0; }
+function hideOverlays(){ $('cd').classList.remove('show'); $('flag').classList.remove('show'); }
+
+/* =====================================================================
+   HALAMAN PEMBUKA & PENGATURAN
+   ===================================================================== */
+$('tBrand').textContent = PENGATURAN.namaAplikasi;
+$('tJudul').innerHTML   = PENGATURAN.judul;
+$('tSub').textContent   = PENGATURAN.subjudul;
+$('credit').textContent = PENGATURAN.pengembang;
+document.title = PENGATURAN.namaAplikasi;
+
+/* mobil berlalu-lalang di halaman pembuka */
+(function(){
+  const d = $('drive');
+  WARNA.forEach((w,i)=>{
+    const c = el('div','dc', carSVG(w,i+1));
+    c.style.animationDuration = (7+i*1.6)+'s';
+    c.style.animationDelay = (-i*2.2)+'s';
+    d.appendChild(c);
+  });
+})();
+
+/* tribun penonton */
+(function(){
+  const crowd = ['😀','😃','😄','🥳','😎','🤩','🙌','👏','😆','🎉','🤗','😁'];
+  const st = $('stands');
+  for(let i=0;i<170;i++){
+    const s = el('span',null,crowd[Math.floor(Math.random()*crowd.length)]);
+    s.style.animationDelay = (-Math.random()*1)+'s';
+    st.appendChild(s);
+  }
+})();
+
+/* ---------- pilih mata pelajaran & tingkat soal ---------- */
+const IKON = {
+  "Matematika":"➗", "IPAS":"🔬", "Pendidikan Agama Islam (PAI)":"🕌", "PJOK":"🏃", "Pendidikan Pancasila":"🦅",
+  "Bahasa Indonesia":"📖", "Seni Budaya":"🎨", "Bahasa Inggris":"🔤", "MULOK Bahasa Buol":"🥁"
+};
+const WARNA_MAPEL = ["#e53935","#1e88e5","#2e9e5b","#f59f00","#8e44ad","#d6336c","#e8590c","#0c8599","#5f3dc4","#495057"];
+const LABEL_LEVEL = {0:"🌈", 1:"⭐", 2:"⭐⭐", 3:"⭐⭐⭐"};
+const SEL = { mapel:null, level:0 };       // mapel: nama mapel, atau '*' untuk semua mapel
+function namaMapel(m){ return m==='*' ? 'Semua Mapel' : m.replace(/\s*\(.*\)\s*/,''); }
+function ikonMapel(m){ return m==='*' ? '🎲' : (IKON[m] || '📘'); }
+
+/* susun bankSoal dari pilihan guru */
+function susunBank(){
+  const src = SEL.mapel==='*' ? DATA_SOAL : DATA_SOAL.filter(m=>m.mapel===SEL.mapel);
+  const out = [];
+  src.forEach(m=>m.soal.forEach(s=>{
+    if(SEL.level && s.tingkat!==SEL.level) return;
+    out.push({ tanya:s.pertanyaan, opsi:['A','B','C','D'].map(k=>s.pilihan[k]), benar:'ABCD'.indexOf(s.jawaban), mapel:m.mapel });
+  }));
+  return out;
+}
+function renderPilih(){
+  const g = $('mgrid'); g.innerHTML = '';
+  const daftar = DATA_SOAL.map(m=>m.mapel).concat(['*']);
+  daftar.forEach((m,i)=>{
+    const b = el('button','mcard','<div class="mi"></div><div class="mn"></div><div class="mc"></div>');
+    b.style.setProperty('--c', WARNA_MAPEL[i % WARNA_MAPEL.length]);
+    b.querySelector('.mi').textContent = ikonMapel(m);
+    b.querySelector('.mn').textContent = namaMapel(m);
+    b.querySelector('.mc').textContent = (m==='*' ? DATA_SOAL.reduce((a,x)=>a+x.soal.length,0) : DATA_SOAL[i].soal.length) + ' soal';
+    if(SEL.mapel===m) b.classList.add('sel');
+    b.onclick = ()=>{ SEL.mapel = m; sfx.pilih(); renderPilih(); };
+    g.appendChild(b);
+  });
+  document.querySelectorAll('.lv').forEach(b=>b.classList.toggle('active', +b.dataset.l===SEL.level));
+  const n = SEL.mapel ? susunBank().length : 0;
+  $('jml').textContent = SEL.mapel ? ('🎯 '+n+' soal') : '👆';
+  $('bPNext').classList.toggle('dim', !SEL.mapel || n===0);
+}
+document.querySelectorAll('.lv').forEach(b=>{ b.onclick = ()=>{ SEL.level = +b.dataset.l; sfx.pilih(); renderPilih(); }; });
+$('bPBack').onclick = ()=>{ showScreen('intro'); };
+$('bPNext').onclick = ()=>{
+  if(!SEL.mapel) return;
+  sfx.mulai(); renderSetup(); showScreen('setup');
+};
+
+let creditT = 0;
+$('bInfo').onclick = ()=>{
+  const c = $('credit'); c.classList.toggle('show');
+  clearTimeout(creditT);
+  if(c.classList.contains('show')) creditT = setTimeout(()=>c.classList.remove('show'), 5000);
+};
+$('bStart').onclick = ()=>{ ac(); sfx.mulai(); renderPilih(); showScreen('pilih'); };
+$('bBack').onclick  = ()=>{ renderPilih(); showScreen('pilih'); };
+
+function simpanNama(){
+  document.querySelectorAll('#names input').forEach((inp,i)=>{ S.names[i] = inp.value; });
+}
+function renderSetup(){
+  $('pill').textContent = ikonMapel(SEL.mapel)+' '+namaMapel(SEL.mapel)+'  •  '+LABEL_LEVEL[SEL.level]+'  •  '+susunBank().length+' soal';
+  document.querySelectorAll('.cnt').forEach(b=>b.classList.toggle('active', +b.dataset.n===S.n));
+  const box = $('names'); box.innerHTML='';
+  for(let i=0;i<S.n;i++){
+    const w = WARNA[i];
+    const row = el('div','nrow', carSVG(w,i+1));
+    row.style.borderColor = w.c;
+    const inp = el('input'); inp.type='text'; inp.maxLength=14; inp.placeholder='Pemain '+(i+1); inp.value = S.names[i]||'';
+    row.appendChild(inp); box.appendChild(row);
+  }
+  box.style.gridTemplateColumns = S.n===2 ? 'minmax(0,1fr)' : 'repeat(2,minmax(0,1fr))';
+  box.style.maxWidth = S.n===2 ? '70vh' : '';
+}
+document.querySelectorAll('.cnt').forEach(b=>{
+  b.onclick = ()=>{ simpanNama(); S.n = +b.dataset.n; sfx.pilih(); renderSetup(); };
+});
+$('bGo').onclick = ()=>{
+  simpanNama(); ac();
+  bankSoal = susunBank();
+  if(!bankSoal.length) return;
+  S.players = [];
+  for(let i=0;i<S.n;i++){
+    S.players.push({ name:(S.names[i]||'').trim() || ('Pemain '+(i+1)), w:WARNA[i], dist:0, score:0, answer:null, time:null, rank:i, done:false, order:0 });
+  }
+  mulaiBabak();
+};
+
+/* =====================================================================
+   MEMBANGUN LAYAR PERMAINAN
+   ===================================================================== */
+function buildGame(){
+  const road = $('road'), ans = $('answers');
+  road.innerHTML=''; ans.innerHTML='';
+  road.appendChild(el('div','curb'));
+  S.players.forEach((p,i)=>{
+    const lane = el('div','lane',
+      `<div class="lbl"><div class="medal">🏁</div><div class="li"><div class="l1"><span class="nm"></span><span class="sc"></span></div><div class="pb"><i></i><em>0%</em></div></div></div>`+
+      `<div class="run"><div class="lc"><div class="car"><div class="cb">${carSVG(p.w,i+1)}</div></div></div><div class="fin"></div></div>`);
+    const lbl = lane.querySelector('.lbl');
+    lbl.style.background = `linear-gradient(135deg,${p.w.c},${p.w.d})`; lbl.style.color = p.w.t;
+    lane.querySelector('.nm').textContent = p.name;
+    p.medal = lane.querySelector('.medal'); p.scEl = lane.querySelector('.sc');
+    p.bar = lane.querySelector('.pb i');    p.pct = lane.querySelector('.pb em');
+    p.lc  = lane.querySelector('.lc');      p.car = lane.querySelector('.car'); p.cb = lane.querySelector('.cb');
+    p.lane = lane;
+    road.appendChild(lane);
+
+    const col = el('div','col','<div class="chd"><span class="cn"></span></div><div class="opts"></div>');
+    col.style.borderColor = p.w.c;
+    const chd = col.querySelector('.chd'); chd.style.background = p.w.c; chd.style.color = p.w.t;
+    col.querySelector('.cn').textContent = '🚗 ' + p.name;
+    p.col = col; p.opts = col.querySelector('.opts');
+    ans.appendChild(col);
+  });
+  road.appendChild(el('div','curb'));
+  S.players.forEach(p=>setCar(p,0));
+  updateBoard();
+}
+function setCar(p, frac){
+  p.car.style.left = (frac*100)+'%';
+  p.car.style.transform = 'translateX('+(-frac*100)+'%)';
+}
+function peringkat(){
+  return S.players.map((p,i)=>({p,i})).sort((a,b)=>{ if(a.p.done&&b.p.done) return a.p.order-b.p.order; if(a.p.done!==b.p.done) return a.p.done?-1:1; return b.p.dist-a.p.dist || b.p.score-a.p.score || a.i-b.i; }).map(x=>x.p);
+}
+function updateBoard(){
+  const r = peringkat(), moved = S.players.some(p=>p.dist>0 || p.done);
+  r.forEach((p,k)=>{ p.rank = k; });
+  S.players.forEach(p=>{
+    const pct = Math.min(100, Math.round(p.dist/PENGATURAN.garisFinis*100));
+    p.bar.style.width = pct+'%'; p.pct.textContent = pct+'%';
+    p.scEl.textContent = '⭐ '+p.score;
+    p.medal.textContent = moved ? MEDALI[p.rank] : '🏁';
+  });
+  const rb = $('rankbar'); rb.innerHTML='';
+  r.forEach(p=>{
+    const chip = el('div','chip','<span>'+(moved?MEDALI[p.rank]:'🚗')+'</span><span class="n"></span><span>⭐'+p.score+'</span>');
+    chip.querySelector('.n').textContent = p.name;
+    chip.style.background = p.w.c; chip.style.color = p.w.t;
+    rb.appendChild(chip);
+  });
+}
+
+/* =====================================================================
+   ALUR PERMAINAN
+   ===================================================================== */
+function mulaiBabak(){
+  clearLater(); stopTimer(); hideOverlays();
+  S.players.forEach(p=>{ p.dist=0; p.score=0; p.answer=null; p.time=null; p.done=false; p.order=0; });
+  S.finN = 0;
+  S.qOrder = acak(bankSoal.map((_,i)=>i)); S.qPtr = 0; S.qNo = 0; S.q = null;
+  buildGame();
+  $('qno').textContent = '0'; $('qm').textContent = ''; $('qtext').textContent = '🚦'; $('reveal').classList.remove('show'); $('timer').style.display='';
+  $('tbar').style.width = '100%';
+  showScreen('game');
+  countdown();
+}
+function countdown(){
+  setPhase('countdown');
+  const cd = $('cd'); cd.classList.add('show');
+  ['3','2','1','🏁'].forEach((t,i)=>{
+    later(()=>{ cd.textContent=t; cd.classList.remove('pop2'); void cd.offsetWidth; cd.classList.add('pop2'); sfx.tick(i===3); }, i*800);
+  });
+  later(()=>{ cd.classList.remove('show'); setPhase('idle'); nextQuestion(); }, 3500);
+}
+function aktif(){ return S.players.filter(p=>!p.done); }
+function ambilSoal(){
+  if(S.qPtr >= S.qOrder.length){ S.qOrder = acak(bankSoal.map((_,i)=>i)); S.qPtr = 0; }
+  return bankSoal[S.qOrder[S.qPtr++]];
+}
+function nextQuestion(){
+  if(S.phase!=='idle' && S.phase!=='question') return;
+  stopTimer();
+  if(S.autoT){ clearTimeout(S.autoT); timers.delete(S.autoT); S.autoT = 0; }
+  S.q = ambilSoal(); S.qNo++;
+  $('qno').textContent = S.qNo; $('qtext').textContent = S.q.tanya; $('qm').textContent = ikonMapel(S.q.mapel); $('qm').title = namaMapel(S.q.mapel);
+  $('reveal').classList.remove('show'); $('timer').style.display='';
+  const shown = acak(S.q.opsi.map((t,i)=>({t,i})));
+  const huruf = ['A','B','C','D'];
+  S.players.forEach((p,pi)=>{
+    p.answer = null; p.time = null;
+    p.col.classList.remove('lock','reveal');
+    p.cb.classList.remove('go','boost','cough');
+    p.opts.innerHTML = '';
+    if(p.done){
+      p.col.classList.add('lock','reveal');
+      p.opts.innerHTML = '<div class="donebox"><div>'+MEDALI[p.rank]+'</div><div>🏁</div></div>';
+      return;
+    }
+    shown.forEach((o,k)=>{
+      const b = el('button','opt','<b>'+huruf[k]+'</b><span></span>');
+      b.querySelector('span').textContent = o.t;
+      b.dataset.idx = o.i;
+      b.addEventListener('pointerdown', e=>{ e.preventDefault(); jawab(pi, o.i, b); });
+      p.opts.appendChild(b);
+    });
+  });
+  S.qStart = performance.now();
+  S.deadline = S.qStart + PENGATURAN.waktuSoal*1000;
+  setPhase('question');
+  S.tid = setInterval(()=>{
+    const left = S.deadline - performance.now();
+    const f = Math.max(0, left/(PENGATURAN.waktuSoal*1000));
+    $('tbar').style.width = (f*100)+'%';
+    $('tbar').classList.toggle('low', f<.3);
+    if(left<=0){ stopTimer(); resolve(); }
+  }, 100);
+  sfx.mulai();
+}
+
+function jawab(pi, idx, btn){
+  if(S.phase!=='question') return;
+  const p = S.players[pi]; if(p.answer!==null) return;
+  p.answer = idx; p.time = performance.now()-S.qStart;
+  p.col.classList.add('lock'); btn.classList.add('picked'); sfx.pilih();
+  const lim = performance.now() + PENGATURAN.waktuSetelahPertama*1000;
+  if(S.deadline > lim) S.deadline = lim;           // pemain pertama menjawab → sisa waktu dipercepat
+  if(aktif().every(x=>x.answer!==null)){
+    stopTimer();
+    const no = S.qNo;
+    later(()=>{ if(S.qNo===no) resolve(); }, 400);
+  }
+}
+
+function resolve(){
+  if(S.phase!=='question') return;
+  setPhase('resolving'); stopTimer();
+  const q = S.q, P = PENGATURAN;
+  const benar = aktif().filter(p=>p.answer===q.benar).sort((a,b)=>a.time-b.time);
+  const salah = S.players.filter(p=>p.answer!==null && p.answer!==q.benar);
+
+  /* tampilkan kunci jawaban */
+  S.players.forEach(p=>{
+    p.col.classList.add('lock','reveal');
+    Array.from(p.opts.children).forEach(b=>{
+      const k = +b.dataset.idx; b.classList.remove('picked');
+      if(k===q.benar) b.classList.add('correct'); else if(k===p.answer) b.classList.add('wrong');
+    });
+  });
+  $('timer').style.display = 'none';
+  $('reveal').textContent = '✅ ' + q.opsi[q.benar]; $('reveal').classList.add('show');
+
+  if(benar.length) sfx.benar();
+  if(salah.length) later(()=>sfx.salah(), benar.length?500:0);
+
+  /* jawaban benar: tercepat maju paling jauh */
+  benar.forEach((p,i)=>{
+    later(()=>{
+      const g  = P.jarakMaju[Math.min(i,P.jarakMaju.length-1)];
+      const pt = P.poin[Math.min(i,P.poin.length-1)];
+      p.dist += g; p.score += pt;
+      setCar(p, Math.min(1, p.dist/P.garisFinis));
+      updateBoard();
+      animasiMaju(p, i===0, '+'+pt+' ⭐');
+      sfx.skor(); sfx.vroom();
+      const r = p.col.getBoundingClientRect();
+      confetti(r.left+r.width/2, r.top+r.height*.3, i===0?70:35);
+    }, 200+i*350);
+  });
+  /* jawaban salah: mobil tertahan & batuk */
+  salah.forEach(p=>animasiBatuk(p));
+
+  later(selesaiBabak, 200 + benar.length*350 + 1700);
+}
+
+function selesaiBabak(){
+  updateBoard();
+  /* pemain yang baru menyentuh garis finis pada soal ini */
+  const baru = aktif().filter(p=>p.dist >= PENGATURAN.garisFinis)
+    .sort((a,b)=>b.dist-a.dist || b.score-a.score);
+  baru.forEach(p=>{ p.done = true; p.order = ++S.finN; });
+  if(baru.length){
+    updateBoard();
+    if(aktif().length===0){ finish(); return; }      // semua pemain sudah finis → permainan selesai
+    miniFinish(baru);                                // masih ada pemain lain → permainan lanjut
+    return;
+  }
+  setPhase('idle');
+  S.autoT = later(nextQuestion, 3200);
+}
+/* perayaan singkat untuk pemain yang finis, permainan tetap berlanjut */
+function miniFinish(baru){
+  $('fname').textContent = baru.map(p=>MEDALI[p.order-1]+' '+p.name).join('  ');
+  $('flag').classList.add('show'); sfx.meriah();
+  const fin = S.players[0].lane.querySelector('.fin').getBoundingClientRect();
+  const rc = $('road').getBoundingClientRect();
+  for(let k=0;k<4;k++) later(()=>firework(fin.left - Math.random()*innerWidth*.3, rc.top + Math.random()*rc.height), k*400);
+  later(()=>{
+    $('flag').classList.remove('show'); $('fname').textContent='';
+    setPhase('idle');
+    S.autoT = later(nextQuestion, 1500);
+  }, 3000);
+}
+
+/* ---------- animasi mobil ---------- */
+function puffs(p, kind, dur){
+  const id = setInterval(()=>{
+    const r = p.car.getBoundingClientRect(), pr = p.lc.getBoundingClientRect();
+    const s = el('span','puff '+kind);
+    s.style.left = (r.left-pr.left + r.width*.04)+'px';
+    s.style.top  = (r.top-pr.top + r.height*.7)+'px';
+    p.lc.appendChild(s); setTimeout(()=>s.remove(), 950);
+  }, 90);
+  timers.add(id);
+  setTimeout(()=>{ clearInterval(id); timers.delete(id); }, dur);
+}
+function pop(p, txt){
+  const s = el('div','pop'); s.textContent = txt; p.car.appendChild(s);
+  setTimeout(()=>s.remove(), 1400);
+}
+function animasiMaju(p, cepat, label){
+  p.cb.classList.add('go'); if(cepat) p.cb.classList.add('boost');
+  puffs(p, '', 1500); pop(p, (cepat?'⚡ ':'')+label);
+  later(()=>p.cb.classList.remove('go','boost'), 1500);
+}
+function animasiBatuk(p){
+  p.cb.classList.add('cough'); puffs(p, 'dark', 1500); pop(p, '💥 uhuk!');
+  later(()=>p.cb.classList.remove('cough'), 1550);
+}
+
+/* ---------- pemenang ---------- */
+function finish(){
+  setPhase('finished'); stopTimer();
+  $('fname').textContent = '🏆 '+peringkat()[0].name;
+  $('flag').classList.add('show'); sfx.meriah();
+  const fin = S.players[0].lane.querySelector('.fin').getBoundingClientRect();
+  const rc = $('road').getBoundingClientRect();
+  for(let k=0;k<8;k++){
+    later(()=>{
+      firework(fin.left - Math.random()*innerWidth*.35, rc.top + Math.random()*rc.height);
+      firework(Math.random()*innerWidth, Math.random()*innerHeight*.5);
+    }, k*420);
+  }
+  later(()=>{ $('flag').classList.remove('show'); $('fname').textContent=''; tampilAkhir(); }, 3800);
+}
+function tampilAkhir(){
+  const r = peringkat();
+  $('winTitle').textContent = '🏆 ' + r[0].name + ' Juara!';
+  const pod = $('pod'); pod.innerHTML = '';
+  const tinggi = [100,78,62,48];
+  const urutan = [1,0,2,3].filter(k=>k<r.length);       // 2 - 1 - 3 - 4
+  urutan.forEach(k=>{
+    const p = r[k];
+    const it = el('div','pi','<div class="pcar">'+carSVG(p.w, S.players.indexOf(p)+1)+'</div><div class="pn"></div><div class="bar"><div class="m">'+MEDALI[k]+'</div><div>⭐ '+p.score+'</div></div>');
+    it.querySelector('.pn').textContent = p.name;
+    const bar = it.querySelector('.bar'); bar.style.height = (tinggi[k]*.62)+'%';
+    bar.style.animationDelay = ((r.length-1-k)*.25)+'s';
+    pod.appendChild(it);
+  });
+  showScreen('end');
+  for(let k=0;k<6;k++){
+    later(()=>{ confetti(Math.random()*innerWidth, innerHeight*.2, 60); firework(Math.random()*innerWidth, innerHeight*(.15+Math.random()*.3)); }, 200+k*600);
+  }
+}
+
+/* =====================================================================
+   KONTROL GURU
+   ===================================================================== */
+$('bLintasan').onclick = ()=>{               // Reset Lintasan: mobil kembali ke garis start
+  if(S.phase==='countdown' || S.phase==='finished' || S.phase==='menu') return;
+  if(S.phase==='resolving'){ clearLater(); setPhase('idle'); S.autoT = later(nextQuestion, 1500); }
+  S.players.forEach(p=>{ p.dist = 0; p.done = false; p.order = 0; p.cb.classList.remove('go','boost','cough'); setCar(p,0); });
+  S.finN = 0; hideOverlays();
+  updateBoard(); sfx.reset();
+};
+$('bReset').onclick = ()=>{ ac(); sfx.reset(); mulaiBabak(); };   // Reset Permainan: skor, soal & posisi dari awal
+$('bSound').onclick = ()=>{
+  muted = !muted; $('bSound').textContent = muted ? '🔇' : '🔊';
+  $('bSound').classList.toggle('off', muted);
+  if(!muted) sfx.pilih();
+};
+function keMenu(){
+  clearLater(); stopTimer(); hideOverlays(); S.phase='menu'; S.autoT=0;
+  showScreen('intro');
+}
+$('bHome').onclick = keMenu;
+$('bMenu').onclick = keMenu;
+$('bAgain').onclick = ()=>{ ac(); sfx.reset(); mulaiBabak(); };     // Main Lagi: tanpa memuat ulang halaman
+
+/* layar penuh */
+$('bFull').onclick = ()=>{
+  const d = document, e = d.documentElement;
+  try{
+    if(d.fullscreenElement || d.webkitFullscreenElement){ (d.exitFullscreen || d.webkitExitFullscreen).call(d); }
+    else { (e.requestFullscreen || e.webkitRequestFullscreen).call(e); }
+  }catch(err){}
+};
+
+/* buka kunci audio pada sentuhan pertama */
+addEventListener('pointerdown', ()=>ac(), {once:true});
+</script>
+</body>
+</html>
